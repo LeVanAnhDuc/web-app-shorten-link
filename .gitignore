@@ -40,3 +40,8 @@ __screenshots__/
 
 test-results/
 playwright-report/
+
+# Env files (local secrets/config) — keep .env.example committed
+.env
+.env.*
+!.env.example
