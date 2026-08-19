@@ -1,0 +1,21 @@
+/*
+ * Tailwind v4 is imported WITHOUT its preflight/reset layer.
+ *
+ * Rationale (division of labor between Tailwind and Vuetify):
+ * - Vuetify ships its own base/reset styles tuned for its components
+ *   (MDC-based typography, box-sizing, form element resets, etc.).
+ * - Tailwind's preflight applies a competing reset (e.g. it strips
+ *   button/input default styling, resets line-height, etc.) that
+ *   fights Vuetify's component styling (buttons, inputs, cards render
+ *   with broken spacing/typography if both resets are loaded).
+ * - We only need Tailwind's utility classes for layout/spacing/typography
+ *   utilities in app-level markup; Vuetify owns all component styling.
+ *
+ * Resolution: import only the `theme` (design tokens/variables used by
+ * utility classes) and `utilities` layers from Tailwind v4, and skip
+ * `preflight` entirely. This lets Tailwind utility classes (flex, p-4,
+ * text-sm, etc.) work everywhere while leaving Vuetify's own base/reset
+ * styles as the only reset applied to the page.
+ */
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
