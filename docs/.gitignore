@@ -1,0 +1,13 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Git worktrees created for feature branches (see root .claude/CLAUDE.md §6)
+.worktrees/
+
+# SuperDesign scratch output not yet promoted to docs/ui-designs/
+.superdesign/exports/
+.superdesign/init/

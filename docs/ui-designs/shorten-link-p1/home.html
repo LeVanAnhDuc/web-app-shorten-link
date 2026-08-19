@@ -1,0 +1,437 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'oklch(var(--background) / <alpha-value>)',
+            foreground: 'oklch(var(--foreground) / <alpha-value>)',
+            card: 'oklch(var(--card) / <alpha-value>)',
+            'card-foreground': 'oklch(var(--card-foreground) / <alpha-value>)',
+            popover: 'oklch(var(--popover) / <alpha-value>)',
+            'popover-foreground': 'oklch(var(--popover-foreground) / <alpha-value>)',
+            primary: 'oklch(var(--primary) / <alpha-value>)',
+            'primary-foreground': 'oklch(var(--primary-foreground) / <alpha-value>)',
+            secondary: 'oklch(var(--secondary) / <alpha-value>)',
+            'secondary-foreground': 'oklch(var(--secondary-foreground) / <alpha-value>)',
+            muted: 'oklch(var(--muted) / <alpha-value>)',
+            'muted-foreground': 'oklch(var(--muted-foreground) / <alpha-value>)',
+            accent: 'oklch(var(--accent) / <alpha-value>)',
+            'accent-foreground': 'oklch(var(--accent-foreground) / <alpha-value>)',
+            destructive: 'oklch(var(--destructive) / <alpha-value>)',
+            border: 'oklch(var(--border) / <alpha-value>)',
+            input: 'oklch(var(--input) / <alpha-value>)',
+            'input-background': 'oklch(var(--input-background) / <alpha-value>)',
+            ring: 'oklch(var(--ring) / <alpha-value>)',
+            success: 'oklch(var(--success) / <alpha-value>)',
+            warning: 'oklch(var(--warning) / <alpha-value>)',
+            info: 'oklch(var(--info) / <alpha-value>)',
+            'brand-teal': 'oklch(var(--brand-teal) / <alpha-value>)',
+            'brand-teal-foreground': 'oklch(var(--brand-teal-foreground) / <alpha-value>)'
+          },
+          borderRadius: { sm: '0.375rem', md: '0.5rem', lg: '0.625rem', xl: '0.875rem' },
+          boxShadow: {
+            xs: '0 1px 2px oklch(0 0 0 / 0.06)',
+            sm: '0 1px 2px oklch(0 0 0 / 0.06)',
+            md: '0 4px 6px oklch(0 0 0 / 0.08)',
+            lg: '0 10px 15px oklch(0 0 0 / 0.12)'
+          },
+          fontFamily: {
+            sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --background: 0.985 0.004 60;
+      --foreground: 0.18 0.02 50;
+      --card: 1 0 0;
+      --card-foreground: 0.18 0.02 50;
+      --popover: 1 0 0;
+      --popover-foreground: 0.18 0.02 50;
+      --primary: 0.62 0.19 35;
+      --primary-foreground: 0.99 0 0;
+      --secondary: 0.95 0.01 60;
+      --secondary-foreground: 0.25 0.02 50;
+      --muted: 0.95 0.01 60;
+      --muted-foreground: 0.5 0.02 55;
+      --accent: 0.93 0.04 200;
+      --accent-foreground: 0.25 0.06 200;
+      --destructive: 0.58 0.22 25;
+      --border: 0.9 0.01 60;
+      --input: 0.9 0.01 60;
+      --input-background: 0.98 0.005 60;
+      --ring: 0.62 0.19 35;
+      --success: 0.6 0.14 150;
+      --warning: 0.75 0.15 85;
+      --info: 0.55 0.12 210;
+      --brand-teal: 0.55 0.1 200;
+      --brand-teal-foreground: 0.99 0 0;
+    }
+    .dark {
+      --background: 0.16 0.015 50;
+      --foreground: 0.97 0.005 60;
+      --card: 0.21 0.015 50;
+      --card-foreground: 0.97 0.005 60;
+      --popover: 0.21 0.015 50;
+      --popover-foreground: 0.97 0.005 60;
+      --primary: 0.68 0.18 35;
+      --primary-foreground: 0.15 0.02 50;
+      --secondary: 0.27 0.015 50;
+      --secondary-foreground: 0.95 0.005 60;
+      --muted: 0.27 0.015 50;
+      --muted-foreground: 0.65 0.015 55;
+      --accent: 0.3 0.04 200;
+      --accent-foreground: 0.9 0.03 200;
+      --destructive: 0.65 0.2 25;
+      --border: 0.34 0.015 50;
+      --input: 0.34 0.015 50;
+      --input-background: 0.24 0.015 50;
+      --ring: 0.68 0.18 35;
+      --success: 0.62 0.13 150;
+      --warning: 0.75 0.15 85;
+      --info: 0.62 0.11 210;
+      --brand-teal: 0.62 0.09 200;
+      --brand-teal-foreground: 0.15 0.02 50;
+    }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <div data-sd-id="1">
+    <section class="bg-background text-foreground pb-12" data-sd-id="2">
+      <div class="px-6 py-3 text-xs font-medium text-muted-foreground" data-sd-id="3">Light</div>
+      <header class="h-16 border-b border-border bg-card/80 backdrop-blur-sm px-4 lg:px-6 flex items-center justify-between sticky top-0 z-40" data-sd-id="4">
+        <div class="flex items-center gap-3" data-sd-id="5">
+          <div class="bg-primary text-primary-foreground rounded-lg size-8 flex items-center justify-center" data-sd-id="6">
+            <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+          </div>
+          <h1 class="text-lg font-semibold" data-sd-id="7">Shorten Link</h1>
+        </div>
+        <div class="flex items-center gap-4" data-sd-id="8">
+          <div class="flex items-center gap-2 text-sm text-muted-foreground" data-sd-id="9">
+            <button class="hover:text-foreground" data-sd-id="10">EN</button>
+            <span class="text-border" data-sd-id="11">|</span>
+            <button class="hover:text-foreground" data-sd-id="12">VI</button>
+          </div>
+          <button class="size-10 rounded-full hover:bg-accent flex items-center justify-center" aria-label="Toggle theme" data-sd-id="13">
+            <iconify-icon icon="mdi:weather-sunny" class="text-xl"></iconify-icon>
+          </button>
+        </div>
+      </header>
+
+      <main class="max-w-xl mx-auto px-4 py-12 space-y-10" data-sd-id="14">
+        <div class="text-center space-y-2" data-sd-id="15">
+          <h1 class="text-2xl font-bold tracking-tight" data-sd-id="16">Shorten Link</h1>
+          <p class="text-sm text-muted-foreground" data-sd-id="17">Free, fast, and anonymous URL shortener.</p>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl shadow-sm p-6 space-y-4" data-sd-id="18">
+          <div class="space-y-2" data-sd-id="19">
+            <label for="long-url-light" class="text-sm font-medium" data-sd-id="20">Target URL</label>
+            <input id="long-url-light" type="url" placeholder="Paste a long link here..." class="h-12 w-full rounded-lg border border-input bg-input-background pl-4 pr-4 text-sm placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 outline-none transition" data-sd-id="21">
+          </div>
+
+          <div class="space-y-2" data-sd-id="22">
+            <label for="alias-light" class="text-sm font-medium" data-sd-id="23">Custom alias (optional)</label>
+            <div class="flex rounded-lg border border-input bg-input-background overflow-hidden focus-within:ring-2 focus-within:ring-ring/20 focus-within:border-ring transition" data-sd-id="24">
+              <span class="h-10 px-3 bg-secondary flex items-center text-sm text-muted-foreground border-r border-input" data-sd-id="25">short.link/</span>
+              <input id="alias-light" type="text" class="h-10 flex-1 px-3 bg-transparent text-sm outline-none" data-sd-id="26">
+            </div>
+          </div>
+
+          <button class="h-12 w-full rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity" data-sd-id="27">
+            Shorten
+          </button>
+        </div>
+
+        <div class="border border-brand-teal/30 bg-brand-teal/5 rounded-xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500" data-sd-id="28">
+          <div class="size-20 rounded-md border border-border bg-card p-1 flex-shrink-0" data-sd-id="29">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https://short.link/ab12cd" alt="QR code for short.link/ab12cd" class="w-full h-full object-contain" data-sd-id="30">
+          </div>
+          <div class="flex-1 min-w-0" data-sd-id="31">
+            <div class="text-lg font-semibold text-foreground truncate" data-sd-id="32">short.link/ab12cd</div>
+            <div class="text-xs text-muted-foreground truncate" data-sd-id="33">https://github.com/superdesign/shorten-link-design-system-spec</div>
+          </div>
+          <button class="size-10 rounded-lg hover:bg-accent flex items-center justify-center text-brand-teal" aria-label="Copy short link" data-sd-id="34">
+            <iconify-icon icon="mdi:content-copy" class="text-xl"></iconify-icon>
+          </button>
+        </div>
+
+        <div class="space-y-4" data-sd-id="35">
+          <h2 class="text-xl font-bold" data-sd-id="36">Your links</h2>
+          <div class="space-y-2" data-sd-id="37">
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 hover:bg-accent/40 transition-colors" data-sd-id="38">
+              <div class="flex items-center gap-3 min-w-0" data-sd-id="39">
+                <div class="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" data-sd-id="40">
+                  <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+                </div>
+                <div class="min-w-0" data-sd-id="41">
+                  <div class="text-sm font-semibold truncate" data-sd-id="42">short.link/f2d8a1</div>
+                  <div class="flex items-center gap-2 mt-1" data-sd-id="43">
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-secondary px-1.5 py-0.5 rounded-md text-muted-foreground font-medium" data-sd-id="44">
+                      <iconify-icon icon="mdi:cursor-default-click" class="text-[12px]"></iconify-icon>
+                      1,204
+                    </span>
+                    <span class="text-xs text-muted-foreground font-medium" data-sd-id="45">2 hours ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0" data-sd-id="46">
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Copy f2d8a1" data-sd-id="47">
+                  <iconify-icon icon="mdi:content-copy" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="View QR for f2d8a1" data-sd-id="48">
+                  <iconify-icon icon="mdi:qrcode" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <a href="#" class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Open f2d8a1" data-sd-id="49">
+                  <iconify-icon icon="mdi:open-in-new" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </a>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Remove f2d8a1" data-sd-id="50">
+                  <iconify-icon icon="mdi:trash-can-outline" class="text-lg text-destructive"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 hover:bg-accent/40 transition-colors" data-sd-id="51">
+              <div class="flex items-center gap-3 min-w-0" data-sd-id="52">
+                <div class="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" data-sd-id="53">
+                  <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+                </div>
+                <div class="min-w-0" data-sd-id="54">
+                  <div class="text-sm font-semibold truncate" data-sd-id="55">short.link/p9x2b3</div>
+                  <div class="flex items-center gap-2 mt-1" data-sd-id="56">
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-secondary px-1.5 py-0.5 rounded-md text-muted-foreground font-medium" data-sd-id="57">
+                      <iconify-icon icon="mdi:cursor-default-click" class="text-[12px]"></iconify-icon>
+                      42
+                    </span>
+                    <span class="text-xs text-muted-foreground font-medium" data-sd-id="58">1 day ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0" data-sd-id="59">
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Copy p9x2b3" data-sd-id="60">
+                  <iconify-icon icon="mdi:content-copy" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="View QR for p9x2b3" data-sd-id="61">
+                  <iconify-icon icon="mdi:qrcode" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <a href="#" class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Open p9x2b3" data-sd-id="62">
+                  <iconify-icon icon="mdi:open-in-new" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </a>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Remove p9x2b3" data-sd-id="63">
+                  <iconify-icon icon="mdi:trash-can-outline" class="text-lg text-destructive"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 hover:bg-accent/40 transition-colors" data-sd-id="64">
+              <div class="flex items-center gap-3 min-w-0" data-sd-id="65">
+                <div class="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" data-sd-id="66">
+                  <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+                </div>
+                <div class="min-w-0" data-sd-id="67">
+                  <div class="text-sm font-semibold truncate" data-sd-id="68">short.link/docs</div>
+                  <div class="flex items-center gap-2 mt-1" data-sd-id="69">
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-secondary px-1.5 py-0.5 rounded-md text-muted-foreground font-medium" data-sd-id="70">
+                      <iconify-icon icon="mdi:cursor-default-click" class="text-[12px]"></iconify-icon>
+                      891
+                    </span>
+                    <span class="text-xs text-muted-foreground font-medium" data-sd-id="71">3 days ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0" data-sd-id="72">
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Copy docs" data-sd-id="73">
+                  <iconify-icon icon="mdi:content-copy" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="View QR for docs" data-sd-id="74">
+                  <iconify-icon icon="mdi:qrcode" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <a href="#" class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Open docs" data-sd-id="75">
+                  <iconify-icon icon="mdi:open-in-new" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </a>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Remove docs" data-sd-id="76">
+                  <iconify-icon icon="mdi:trash-can-outline" class="text-lg text-destructive"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <div aria-live="polite" class="sr-only" id="copy-announcer" data-sd-id="77"></div>
+    </section>
+
+    <section class="dark bg-background text-foreground pb-12" data-sd-id="78">
+      <div class="px-6 py-3 text-xs font-medium text-muted-foreground" data-sd-id="79">Dark</div>
+      <header class="h-16 border-b border-border bg-card/80 backdrop-blur-sm px-4 lg:px-6 flex items-center justify-between sticky top-0 z-40" data-sd-id="80">
+        <div class="flex items-center gap-3" data-sd-id="81">
+          <div class="bg-primary text-primary-foreground rounded-lg size-8 flex items-center justify-center" data-sd-id="82">
+            <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+          </div>
+          <h1 class="text-lg font-semibold" data-sd-id="83">Shorten Link</h1>
+        </div>
+        <div class="flex items-center gap-4" data-sd-id="84">
+          <div class="flex items-center gap-2 text-sm text-muted-foreground" data-sd-id="85">
+            <button class="hover:text-foreground" data-sd-id="86">EN</button>
+            <span class="text-border" data-sd-id="87">|</span>
+            <button class="hover:text-foreground" data-sd-id="88">VI</button>
+          </div>
+          <button class="size-10 rounded-full hover:bg-accent flex items-center justify-center" aria-label="Toggle theme" data-sd-id="89">
+            <iconify-icon icon="mdi:weather-night" class="text-xl"></iconify-icon>
+          </button>
+        </div>
+      </header>
+
+      <main class="max-w-xl mx-auto px-4 py-12 space-y-10" data-sd-id="90">
+        <div class="text-center space-y-2" data-sd-id="91">
+          <h1 class="text-2xl font-bold tracking-tight" data-sd-id="92">Shorten Link</h1>
+          <p class="text-sm text-muted-foreground" data-sd-id="93">Free, fast, and anonymous URL shortener.</p>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl shadow-sm p-6 space-y-4" data-sd-id="94">
+          <div class="space-y-2" data-sd-id="95">
+            <label for="long-url-dark" class="text-sm font-medium" data-sd-id="96">Target URL</label>
+            <input id="long-url-dark" type="url" placeholder="Paste a long link here..." class="h-12 w-full rounded-lg border border-input bg-input-background pl-4 pr-4 text-sm placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20 outline-none transition" data-sd-id="97">
+          </div>
+
+          <div class="space-y-2" data-sd-id="98">
+            <label for="alias-dark" class="text-sm font-medium" data-sd-id="99">Custom alias (optional)</label>
+            <div class="flex rounded-lg border border-input bg-input-background overflow-hidden focus-within:ring-2 focus-within:ring-ring/20 focus-within:border-ring transition" data-sd-id="100">
+              <span class="h-10 px-3 bg-secondary flex items-center text-sm text-muted-foreground border-r border-input" data-sd-id="101">short.link/</span>
+              <input id="alias-dark" type="text" class="h-10 flex-1 px-3 bg-transparent text-sm outline-none" data-sd-id="102">
+            </div>
+          </div>
+
+          <button class="h-12 w-full rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity" data-sd-id="103">
+            Shorten
+          </button>
+        </div>
+
+        <div class="border border-brand-teal/30 bg-brand-teal/5 rounded-xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500" data-sd-id="104">
+          <div class="size-20 rounded-md border border-border bg-card p-1 flex-shrink-0" data-sd-id="105">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=https://short.link/ab12cd" alt="QR code for short.link/ab12cd" class="w-full h-full object-contain" data-sd-id="106">
+          </div>
+          <div class="flex-1 min-w-0" data-sd-id="107">
+            <div class="text-lg font-semibold text-foreground truncate" data-sd-id="108">short.link/ab12cd</div>
+            <div class="text-xs text-muted-foreground truncate" data-sd-id="109">https://github.com/superdesign/shorten-link-design-system-spec</div>
+          </div>
+          <button class="size-10 rounded-lg hover:bg-accent flex items-center justify-center text-brand-teal" aria-label="Copy short link" data-sd-id="110">
+            <iconify-icon icon="mdi:content-copy" class="text-xl"></iconify-icon>
+          </button>
+        </div>
+
+        <div class="space-y-4" data-sd-id="111">
+          <h2 class="text-xl font-bold" data-sd-id="112">Your links</h2>
+          <div class="space-y-2" data-sd-id="113">
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 hover:bg-accent/40 transition-colors" data-sd-id="114">
+              <div class="flex items-center gap-3 min-w-0" data-sd-id="115">
+                <div class="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" data-sd-id="116">
+                  <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+                </div>
+                <div class="min-w-0" data-sd-id="117">
+                  <div class="text-sm font-semibold truncate" data-sd-id="118">short.link/f2d8a1</div>
+                  <div class="flex items-center gap-2 mt-1" data-sd-id="119">
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-secondary px-1.5 py-0.5 rounded-md text-muted-foreground font-medium" data-sd-id="120">
+                      <iconify-icon icon="mdi:cursor-default-click" class="text-[12px]"></iconify-icon>
+                      1,204
+                    </span>
+                    <span class="text-xs text-muted-foreground font-medium" data-sd-id="121">2 hours ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0" data-sd-id="122">
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Copy f2d8a1" data-sd-id="123">
+                  <iconify-icon icon="mdi:content-copy" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="View QR for f2d8a1" data-sd-id="124">
+                  <iconify-icon icon="mdi:qrcode" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <a href="#" class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Open f2d8a1" data-sd-id="125">
+                  <iconify-icon icon="mdi:open-in-new" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </a>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Remove f2d8a1" data-sd-id="126">
+                  <iconify-icon icon="mdi:trash-can-outline" class="text-lg text-destructive"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 hover:bg-accent/40 transition-colors" data-sd-id="127">
+              <div class="flex items-center gap-3 min-w-0" data-sd-id="128">
+                <div class="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" data-sd-id="129">
+                  <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+                </div>
+                <div class="min-w-0" data-sd-id="130">
+                  <div class="text-sm font-semibold truncate" data-sd-id="131">short.link/p9x2b3</div>
+                  <div class="flex items-center gap-2 mt-1" data-sd-id="132">
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-secondary px-1.5 py-0.5 rounded-md text-muted-foreground font-medium" data-sd-id="133">
+                      <iconify-icon icon="mdi:cursor-default-click" class="text-[12px]"></iconify-icon>
+                      42
+                    </span>
+                    <span class="text-xs text-muted-foreground font-medium" data-sd-id="134">1 day ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0" data-sd-id="135">
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Copy p9x2b3" data-sd-id="136">
+                  <iconify-icon icon="mdi:content-copy" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="View QR for p9x2b3" data-sd-id="137">
+                  <iconify-icon icon="mdi:qrcode" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <a href="#" class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Open p9x2b3" data-sd-id="138">
+                  <iconify-icon icon="mdi:open-in-new" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </a>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Remove p9x2b3" data-sd-id="139">
+                  <iconify-icon icon="mdi:trash-can-outline" class="text-lg text-destructive"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3 hover:bg-accent/40 transition-colors" data-sd-id="140">
+              <div class="flex items-center gap-3 min-w-0" data-sd-id="141">
+                <div class="size-10 rounded-md bg-primary/10 text-primary flex items-center justify-center flex-shrink-0" data-sd-id="142">
+                  <iconify-icon icon="mdi:link-variant" class="text-xl"></iconify-icon>
+                </div>
+                <div class="min-w-0" data-sd-id="143">
+                  <div class="text-sm font-semibold truncate" data-sd-id="144">short.link/docs</div>
+                  <div class="flex items-center gap-2 mt-1" data-sd-id="145">
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-secondary px-1.5 py-0.5 rounded-md text-muted-foreground font-medium" data-sd-id="146">
+                      <iconify-icon icon="mdi:cursor-default-click" class="text-[12px]"></iconify-icon>
+                      891
+                    </span>
+                    <span class="text-xs text-muted-foreground font-medium" data-sd-id="147">3 days ago</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0" data-sd-id="148">
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Copy docs" data-sd-id="149">
+                  <iconify-icon icon="mdi:content-copy" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="View QR for docs" data-sd-id="150">
+                  <iconify-icon icon="mdi:qrcode" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </button>
+                <a href="#" class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Open docs" data-sd-id="151">
+                  <iconify-icon icon="mdi:open-in-new" class="text-lg text-muted-foreground hover:text-foreground"></iconify-icon>
+                </a>
+                <button class="size-9 rounded-md hover:bg-accent flex items-center justify-center" aria-label="Remove docs" data-sd-id="152">
+                  <iconify-icon icon="mdi:trash-can-outline" class="text-lg text-destructive"></iconify-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <div aria-live="polite" class="sr-only" id="copy-announcer-dark" data-sd-id="153"></div>
+    </section>
+  </div>
+
+
+</body></html>
