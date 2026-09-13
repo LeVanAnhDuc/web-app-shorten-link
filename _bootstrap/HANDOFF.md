@@ -39,7 +39,7 @@ Trong Claude Code mở tại `D:\Learn\web-app-shorten-link`, gõ:
 
 Plan được viết cho engineer zero-context nên tự đủ để chạy. Lưu ý khi chạy:
 - **Commit review gate BẬT mặc định** (store §7): trình diff cho user duyệt trước mỗi commit. (Nói "skip review" nếu muốn tự commit.)
-- **Prerequisites**: Node+yarn; **PostgreSQL local đang chạy** (biết creds tạo DB `shortenlink`); GitHub token có scope tạo repo (chỉ cần Task 9).
+- **Prerequisites**: Node+pnpm; **PostgreSQL local đang chạy** (biết creds tạo DB `shortenlink`); GitHub token có scope tạo repo (chỉ cần Task 9).
 - **Task 8** = gate duyệt UI (SuperDesign) — BLOCKING, chờ user duyệt light+dark.
 - **Task 9** (tạo GitHub repo) = GATED, hỏi user trước (hành động ra ngoài). Có thể hoãn tới lúc tạo PR đầu.
 - Các file planning trong `_bootstrap/` là tạm; nội dung sẽ được author vào docs thật ở **Task 7** (`docs/project-goals.md`, `docs/erd.md`, `docs/specs/shorten-link-p1/design.md`). Xoá `_bootstrap/` sau khi bootstrap xong nếu muốn.
