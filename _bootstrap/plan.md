@@ -6,12 +6,12 @@
 
 **Architecture:** Monorepo 4 repo git độc lập (`.claude`, `docs`, `server`, `client`) tại `D:\Learn\web-app-shorten-link\`. `server/` = NestJS + Prisma + PostgreSQL; `client/` = Vue 3 + Vite + Vuetify + Tailwind. `.claude/` fork từ store, viết lại phần stack-specific. Bootstrap khởi tạo git LOCAL trước; GitHub remote là task cuối, gated theo xác nhận user.
 
-**Tech Stack:** NestJS + Prisma 6 + PostgreSQL + @nestjs/throttler + nanoid (BE, yarn, Jest) · Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4 + Pinia + Vue Router + TanStack Vue Query + VeeValidate + Zod + vue-i18n + axios + qrcode + Playwright (FE, yarn).
+**Tech Stack:** NestJS + Prisma 6 + PostgreSQL + @nestjs/throttler + nanoid (BE, pnpm, Jest) · Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4 + Pinia + Vue Router + TanStack Vue Query + VeeValidate + Zod + vue-i18n + axios + qrcode + Playwright (FE, pnpm).
 
 ## Global Constraints
 
 - **Ports dev**: BE `:5300`, FE `:3300` (tránh store `:5000/:3000`, match-cv `:5200`). Verbatim mọi config.
-- **Package manager**: `yarn` (đồng bộ store/match-cv).
+- **Package manager**: `pnpm` (đồng bộ store/match-cv). Chốt tháng 8 là `yarn`; cả workspace chuyển sang pnpm ngày 13.09.2026.
 - **Không copy code app từ store** — chỉ clone format (`.claude` methodology + skills + docs skeleton + layout).
 - **Không dùng git worktree của store** — bootstrap tạo repo mới; scaffold commit đầu vào `main` mỗi repo mới. Feature P1 (Plan 2) mới theo worktree per-repo.
 - **Không commit secret**: `.env` gitignored; chỉ commit `.env.example` (key + placeholder).
@@ -75,7 +75,7 @@ Expected: in ra `main` 4 lần.
 
 ```bash
 cd "D:/Learn/web-app-shorten-link"
-npx @nestjs/cli@latest new server --package-manager yarn --skip-git --directory server
+pnpm dlx @nestjs/cli@latest new server --package-manager pnpm --skip-git --directory server
 ```
 (Nếu CLI từ chối thư mục không rỗng: scaffold ra temp rồi copy nội dung vào `server/`.)
 

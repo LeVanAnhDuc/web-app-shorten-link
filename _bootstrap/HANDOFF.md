@@ -15,8 +15,8 @@ Tạo project MỚI `web-app-shorten-link` = **URL shortener**, bằng cách **c
   - **P2 (sau)**: OAuth/OIDC **app vệ tinh của IDMS** (`web-app-store`) → login qua IDMS.
   - **P3 (sau)**: quản lý per-user + analytics chi tiết (geo/device), sửa/xoá, expiration...
 - **Stack (chốt)**:
-  - BE = **NestJS + Prisma 6 + PostgreSQL + @nestjs/throttler + nanoid** (yarn, Jest). Mượn techstack/skills BE từ `D:\Learn\web-app-match-cv`.
-  - FE = **Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4 + Pinia + Vue Router + TanStack Vue Query + VeeValidate + Zod + vue-i18n + axios + qrcode + Playwright** (yarn).
+  - BE = **NestJS + Prisma 6 + PostgreSQL + @nestjs/throttler + nanoid** (pnpm, Jest). Mượn techstack/skills BE từ `D:\Learn\web-app-match-cv`.
+  - FE = **Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4 + Pinia + Vue Router + TanStack Vue Query + VeeValidate + Zod + vue-i18n + axios + qrcode + Playwright** (pnpm).
 - **Ports dev**: BE `:5300`, FE `:3300`.
 - **DB name**: `shortenlink` (PostgreSQL local, không Docker).
 - **4 repo git**: `.claude`→`claude-architecture-shorten-link`, `docs`→`doc-web-app-shorten-link`, `server`→`api-web-app-shorten-link`, `client`→`client-web-app-shorten-link`.
