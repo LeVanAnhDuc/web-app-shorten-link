@@ -4,34 +4,34 @@ Public, anonymous URL shortener — paste a long URL, get a short link plus a cl
 
 ## Commands
 
-Both sides use `yarn`. There is no root `package.json`, no Docker Compose and no Makefile, so every command runs from `server/` or `client/`.
+Both sides use `pnpm`. There is no root `package.json`, no `pnpm-workspace.yaml`, no Docker Compose and no Makefile, so every command runs from `server/` or `client/` — each side owns its own `pnpm-lock.yaml`.
 
 From `server/`:
 
 ```bash
-yarn install                              # install dependencies
-yarn start:dev                            # dev server, watch mode, :5300
-yarn build                                # nest build -> dist/
-yarn start:prod                           # run compiled dist/main
-yarn test                                 # Jest unit tests (src/**/*.spec.ts)
-yarn test:e2e                             # Jest + supertest (test/jest-e2e.json)
-yarn lint                                 # ESLint --fix
-yarn format                               # Prettier write
-npx prisma migrate dev --name <change>    # create + apply a dev migration
-npx prisma generate                       # regenerate Prisma Client
-npx prisma studio                         # browse the local DB
+pnpm install                                   # install dependencies
+pnpm start:dev                                 # dev server, watch mode, :5300
+pnpm build                                     # nest build -> dist/
+pnpm start:prod                                # run compiled dist/main
+pnpm test                                      # Jest unit tests (src/**/*.spec.ts)
+pnpm test:e2e                                  # Jest + supertest (test/jest-e2e.json)
+pnpm lint                                      # ESLint --fix
+pnpm format                                    # Prettier write
+pnpm exec prisma migrate dev --name <change>   # create + apply a dev migration
+pnpm exec prisma generate                      # regenerate Prisma Client
+pnpm exec prisma studio                        # browse the local DB
 ```
 
 From `client/`:
 
 ```bash
-yarn install       # install dependencies
-yarn dev           # Vite dev server, :3300
-yarn build         # vue-tsc type-check + production build
-yarn preview       # serve the production build
-yarn type-check    # vue-tsc --build, no emit
-yarn test:e2e      # Playwright E2E
-yarn lint          # oxlint --fix + eslint --fix
+pnpm install       # install dependencies
+pnpm dev           # Vite dev server, :3300
+pnpm build         # vue-tsc type-check + production build
+pnpm preview       # serve the production build
+pnpm type-check    # vue-tsc --build, no emit
+pnpm test:e2e      # Playwright E2E
+pnpm lint          # oxlint --fix + eslint --fix
 ```
 
 ## README (REQUIRED — keep in sync with features)

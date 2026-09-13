@@ -89,8 +89,8 @@ Rõ ràng **KHÔNG** thuộc scope của Phase 1 (một số dời sang P2/P3 nh
 
 | Layer | Stack |
 |---|---|
-| **Backend** | NestJS + Prisma 6 + PostgreSQL, `@nestjs/throttler` (rate-limit), `nanoid` (sinh short code). Package manager `yarn`, test `Jest`. Dev port **`:5300`**. DB name `shortenlink`. |
-| **Frontend** | Vue 3 + Vite + TypeScript, Vuetify 3 (component library) + Tailwind v4 (utility), Pinia (client state — local history), Vue Router, TanStack Vue Query (server state), VeeValidate + Zod (form + schema validation), `vue-i18n` (EN/VI), `axios` (HTTP), `qrcode` (QR client-side), Playwright (E2E). Package manager `yarn`. Dev port **`:3300`**. |
+| **Backend** | NestJS + Prisma 6 + PostgreSQL, `@nestjs/throttler` (rate-limit), `nanoid` (sinh short code). Package manager `pnpm`, test `Jest`. Dev port **`:5300`**. DB name `shortenlink`. |
+| **Frontend** | Vue 3 + Vite + TypeScript, Vuetify 3 (component library) + Tailwind v4 (utility), Pinia (client state — local history), Vue Router, TanStack Vue Query (server state), VeeValidate + Zod (form + schema validation), `vue-i18n` (EN/VI), `axios` (HTTP), `qrcode` (QR client-side), Playwright (E2E). Package manager `pnpm`. Dev port **`:3300`**. |
 | **OAuth client (P2, chưa dùng ở P1)** | TBD khi vào spec P2 — client OIDC của `web-app-store` (IDMS), lib cụ thể quyết định lúc đó. |
 
 Chi tiết version cụ thể: `.claude/techstack/backend.md`, `.claude/techstack/frontend.md`.

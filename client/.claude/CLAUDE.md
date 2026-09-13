@@ -17,7 +17,7 @@ Chi tiết version/packages xem `../package.json`. Tóm tắt:
 - **HTTP**: Axios (`src/lib/axios.ts` → `apiClient`)
 - **Misc**: `qrcode` (QR generation), `@mdi/font` (icon set cho Vuetify)
 - **E2E**: Playwright
-- **Package manager**: yarn — dev server port `:3300`
+- **Package manager**: pnpm — dev server port `:3300`
 
 ## Skills
 
@@ -37,12 +37,12 @@ Không có `standard-react`, `standard-nextjs`, `standard-shadcn`, `standard-seo
 ## Commands
 
 ```bash
-yarn dev              # Start dev server (Vite), http://localhost:3300
-yarn build            # Type-check (vue-tsc) + production build
-yarn preview          # Preview production build
-yarn type-check       # vue-tsc --build (type check only, no emit)
-yarn lint             # oxlint --fix + eslint --fix (run-s lint:*)
-yarn test:e2e         # Playwright E2E tests
+pnpm dev              # Start dev server (Vite), http://localhost:3300
+pnpm build            # Type-check (vue-tsc) + production build
+pnpm preview          # Preview production build
+pnpm type-check       # vue-tsc --build (type check only, no emit)
+pnpm lint             # oxlint --fix + eslint --fix (run-s lint:*)
+pnpm test:e2e         # Playwright E2E tests
 ```
 
 ## Architecture
@@ -91,12 +91,12 @@ Order matters only where a plugin depends on another at setup time — keep new 
 **MANDATORY: After completing ANY code task in this directory, run these checks in order:**
 
 ```bash
-yarn lint         # auto-fix lint errors (oxlint + eslint)
-yarn type-check   # vue-tsc --build (errors must be fixed manually)
+pnpm lint         # auto-fix lint errors (oxlint + eslint)
+pnpm type-check   # vue-tsc --build (errors must be fixed manually)
 ```
 
 - Run both even if you think the code is clean
-- If `yarn lint` or `yarn type-check` report errors → fix ALL errors before responding to the user
+- If `pnpm lint` or `pnpm type-check` report errors → fix ALL errors before responding to the user
 - Only after both pass with no errors can you hand over to the user
-- `yarn lint` may auto-fix files — always re-read modified files after running it
+- `pnpm lint` may auto-fix files — always re-read modified files after running it
 - Before finalizing UI work, self-audit against `standard-accessibility/SKILL.md` (a11y) and `standard-tailwind/SKILL.md` (no hardcoded palette colors bypassing tokens) — lint/type-check passing does not mean these are satisfied
