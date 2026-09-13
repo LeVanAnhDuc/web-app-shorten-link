@@ -20,7 +20,7 @@
 
 ## Prerequisites (verify trước Task 1)
 
-- Node.js LTS + `yarn` có sẵn (`node -v`, `yarn -v`).
+- Node.js LTS + `pnpm` có sẵn (`node -v`, `pnpm -v`).
 - PostgreSQL chạy local, biết superuser creds để tạo DB `shortenlink`.
 - GitHub account `LeVanAnhDuc` + GitHub MCP token có scope tạo repo (chỉ cần ở Task 9).
 
@@ -69,7 +69,7 @@ Expected: in ra `main` 4 lần.
 - Create: `server/.gitignore` (nest default có sẵn)
 
 **Interfaces:**
-- Produces: NestJS app build được (`yarn build`), chạy dev được, lắng nghe port `5300`.
+- Produces: NestJS app build được (`pnpm build`), chạy dev được, lắng nghe port `5300`.
 
 - [ ] **Step 1: Scaffold Nest vào thư mục có sẵn**
 
@@ -85,12 +85,12 @@ Modify `server/src/main.ts`: `await app.listen(process.env.PORT ?? 5300);`
 
 - [ ] **Step 3: Verify build**
 
-Run: `cd "D:/Learn/web-app-shorten-link/server" && yarn build`
+Run: `cd "D:/Learn/web-app-shorten-link/server" && pnpm build`
 Expected: build thành công, sinh `dist/`.
 
 - [ ] **Step 4: Verify run**
 
-Run: `cd "D:/Learn/web-app-shorten-link/server" && yarn start:dev` (chạy nền, kiểm port 5300 listen rồi tắt)
+Run: `cd "D:/Learn/web-app-shorten-link/server" && pnpm start:dev` (chạy nền, kiểm port 5300 listen rồi tắt)
 Expected: Nest khởi động, log "Nest application successfully started" trên `:5300`.
 
 - [ ] **Step 5: Commit** (sau khi user duyệt diff)
@@ -110,14 +110,14 @@ git -C "D:/Learn/web-app-shorten-link/server" commit -m "chore: scaffold NestJS 
 - Modify: `server/package.json` (thêm deps)
 
 **Interfaces:**
-- Produces: kết nối Postgres `shortenlink`, `npx prisma migrate` chạy được. (Model `Link` đầy đủ để lại cho Plan 2; ở đây chỉ khởi tạo Prisma + 1 migration khởi đầu tối thiểu.)
+- Produces: kết nối Postgres `shortenlink`, `pnpm exec prisma migrate` chạy được. (Model `Link` đầy đủ để lại cho Plan 2; ở đây chỉ khởi tạo Prisma + 1 migration khởi đầu tối thiểu.)
 
 - [ ] **Step 1: Cài Prisma + client**
 
 ```bash
 cd "D:/Learn/web-app-shorten-link/server"
-yarn add @prisma/client && yarn add -D prisma
-npx prisma init --datasource-provider postgresql
+pnpm add @prisma/client && pnpm add -D prisma
+pnpm exec prisma init --datasource-provider postgresql
 ```
 
 - [ ] **Step 2: `.env.example` + `.env`**
@@ -137,7 +137,7 @@ Expected: `CREATE DATABASE`.
 - [ ] **Step 4: Migration khởi đầu (schema tối thiểu)**
 
 `server/prisma/schema.prisma` — giữ generator+datasource mặc định, chưa thêm model (model `Link` để Plan 2 định nghĩa cùng test). Chạy:
-Run: `npx prisma migrate dev --name init`
+Run: `pnpm exec prisma migrate dev --name init`
 Expected: tạo migration + `Prisma schema loaded`, DB sync (empty schema hợp lệ).
 
 - [ ] **Step 5: Verify `.env` gitignored**
@@ -167,23 +167,23 @@ git -C "D:/Learn/web-app-shorten-link/server" commit -m "chore: add Prisma + Pos
 
 ```bash
 cd "D:/Learn/web-app-shorten-link"
-npm create vue@latest client -- --ts --router --pinia --eslint --playwright
+pnpm create vue@latest client --ts --router --pinia --eslint --playwright
 ```
 (create-vue tôn trọng thư mục có sẵn nếu rỗng; nếu không, scaffold temp rồi copy.)
 
 - [ ] **Step 2: Install + set port 3300**
 
 Modify `client/vite.config.ts`: thêm `server: { port: 3300 }` vào defineConfig.
-Run: `cd "D:/Learn/web-app-shorten-link/client" && yarn`
+Run: `cd "D:/Learn/web-app-shorten-link/client" && pnpm install`
 
 - [ ] **Step 3: Verify build**
 
-Run: `cd "D:/Learn/web-app-shorten-link/client" && yarn build`
+Run: `cd "D:/Learn/web-app-shorten-link/client" && pnpm build`
 Expected: build thành công, sinh `dist/`.
 
 - [ ] **Step 4: Verify dev run**
 
-Run: `yarn dev` (nền, kiểm `:3300` listen rồi tắt)
+Run: `pnpm dev` (nền, kiểm `:3300` listen rồi tắt)
 Expected: Vite log `Local: http://localhost:3300/`.
 
 - [ ] **Step 5: Commit** (sau duyệt)
@@ -209,8 +209,8 @@ git -C "D:/Learn/web-app-shorten-link/client" commit -m "chore: scaffold Vue 3 c
 
 ```bash
 cd "D:/Learn/web-app-shorten-link/client"
-yarn add vuetify @mdi/font @tanstack/vue-query vee-validate zod @vee-validate/zod vue-i18n axios qrcode
-yarn add -D tailwindcss @tailwindcss/vite
+pnpm add vuetify @mdi/font @tanstack/vue-query vee-validate zod @vee-validate/zod vue-i18n axios qrcode
+pnpm add -D tailwindcss @tailwindcss/vite
 ```
 
 - [ ] **Step 2: Tailwind v4 qua Vite plugin**
@@ -228,7 +228,7 @@ Vuetify (`createVuetify`), Vue Query (`VueQueryPlugin`), i18n (`createI18n` vớ
 
 - [ ] **Step 5: Verify dev run không lỗi console**
 
-Run: `yarn dev` → mở `:3300`, kiểm không có lỗi import/plugin trong console; render 1 Vuetify component test (vd `<v-btn>`).
+Run: `pnpm dev` → mở `:3300`, kiểm không có lỗi import/plugin trong console; render 1 Vuetify component test (vd `<v-btn>`).
 Expected: trang render, Vuetify style áp dụng, không lỗi.
 
 - [ ] **Step 6: Commit** (sau duyệt)
