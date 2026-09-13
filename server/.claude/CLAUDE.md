@@ -37,20 +37,20 @@ Thư mục `.claude/skills/` chứa các file hướng dẫn coding convention.
 ## Commands
 
 ```bash
-yarn start:dev        # Start dev server (watch mode), port :5300
-yarn start:debug       # Debug mode with watch
-yarn build             # Compile TypeScript → dist/ (nest build)
-yarn start:prod        # Run compiled dist/main
-yarn lint              # ESLint check + auto-fix
-yarn format            # Prettier write (src/, test/)
-yarn test              # Run Jest unit tests
-yarn test:watch        # Jest watch mode
-yarn test:cov          # Run tests with coverage
-yarn test:e2e          # Run e2e tests (test/jest-e2e.json)
+pnpm start:dev         # Start dev server (watch mode), port :5300
+pnpm start:debug       # Debug mode with watch
+pnpm build             # Compile TypeScript → dist/ (nest build)
+pnpm start:prod        # Run compiled dist/main
+pnpm lint              # ESLint check + auto-fix
+pnpm format            # Prettier write (src/, test/)
+pnpm test              # Run Jest unit tests
+pnpm test:watch        # Jest watch mode
+pnpm test:cov          # Run tests with coverage
+pnpm test:e2e          # Run e2e tests (test/jest-e2e.json)
 
-npx prisma migrate dev --name <change>   # create + apply a dev migration
-npx prisma generate                       # regenerate Prisma Client types
-npx prisma studio                         # browse local DB
+pnpm exec prisma migrate dev --name <change>   # create + apply a dev migration
+pnpm exec prisma generate                      # regenerate Prisma Client types
+pnpm exec prisma studio                        # browse local DB
 ```
 
 ## Architecture
@@ -110,15 +110,15 @@ Pattern self-review 3 bước (review → phản biện → refactor) đã đư�
 **MANDATORY: After completing ANY code task in this directory, run all checks in order:**
 
 ```bash
-yarn format   # auto-fix formatting
-yarn lint     # auto-fix lint errors
-yarn build    # tsc via nest build — surfaces type errors
+pnpm format   # auto-fix formatting
+pnpm lint     # auto-fix lint errors
+pnpm build    # tsc via nest build — surfaces type errors
 ```
 
 - Run all 3 even if you think the code is clean
-- If `yarn lint` or `yarn build` report errors → fix ALL errors before responding to the user
+- If `pnpm lint` or `pnpm build` report errors → fix ALL errors before responding to the user
 - Only after all pass with no errors can you hand over to the user
-- `yarn format` and `yarn lint` may auto-fix files — always re-read modified files after running them
+- `pnpm format` and `pnpm lint` may auto-fix files — always re-read modified files after running them
 
 ### Test File Naming & Location
 

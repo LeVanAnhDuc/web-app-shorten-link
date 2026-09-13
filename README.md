@@ -35,8 +35,8 @@ Everything below is **planned** in `docs/` and confirmed absent from the code. P
 
 | Layer | Stack |
 | --- | --- |
-| Backend (`server/`) | NestJS 11, Prisma 6.19 + PostgreSQL (DB `shortenlink`), TypeScript 5.7, Jest 30 + supertest, ESLint + Prettier, `yarn`, dev port `:5300` |
-| Frontend (`client/`) | Vue 3.5 + Vite 8 + TypeScript 6, Vuetify 3.12 (+ `@mdi/font`), Tailwind CSS v4 (utilities only, preflight off), Pinia, Vue Router 5, TanStack Vue Query 5, VeeValidate 4 + Zod 4, `vue-i18n` 11 (en/vi), Axios, `qrcode`, Playwright, oxlint + ESLint, `yarn`, dev port `:3300` |
+| Backend (`server/`) | NestJS 11, Prisma 6.19 + PostgreSQL (DB `shortenlink`), TypeScript 5.7, Jest 30 + supertest, ESLint + Prettier, `pnpm`, dev port `:5300` |
+| Frontend (`client/`) | Vue 3.5 + Vite 8 + TypeScript 6, Vuetify 3.12 (+ `@mdi/font`), Tailwind CSS v4 (utilities only, preflight off), Pinia, Vue Router 5, TanStack Vue Query 5, VeeValidate 4 + Zod 4, `vue-i18n` 11 (en/vi), Axios, `qrcode`, Playwright, oxlint + ESLint, `pnpm`, dev port `:3300` |
 | Planned, not installed | `@nestjs/throttler` (rate limiting), `nanoid` (short-code generation), `class-validator` (request DTO validation) |
 | Tooling / docs | Prisma CLI, SuperDesign (design system + approved HTML mocks under `docs/`) |
 
@@ -44,14 +44,14 @@ Node.js: the client declares `^22.18.0 || >=24.12.0`.
 
 ## Running
 
-Prerequisites: Node.js (see above), `yarn`, and a local PostgreSQL instance. There is no root `package.json` and no Docker Compose — each side is installed and run from its own directory, in two terminals.
+Prerequisites: Node.js (see above), `pnpm`, and a local PostgreSQL instance. There is no root `package.json`, no `pnpm-workspace.yaml` and no Docker Compose — each side owns its own `pnpm-lock.yaml` and is installed and run from its own directory, in two terminals.
 
 ### Backend — `server/`
 
 ```bash
 cd server
 cp .env.example .env          # then fill in the real DATABASE_URL credentials
-yarn install
+pnpm install
 ```
 
 `.env` keys (see `server/.env.example`): `PORT` (defaults to `5300`) and `DATABASE_URL`, e.g. `postgresql://USER:PASSWORD@localhost:5432/shortenlink?schema=public`.
@@ -60,8 +60,8 @@ Create the database once, then apply migrations:
 
 ```bash
 createdb shortenlink                      # or: psql -U postgres -c "CREATE DATABASE shortenlink;"
-npx prisma migrate dev --name init        # no-op today: schema.prisma declares no models yet
-yarn start:dev                            # http://localhost:5300
+pnpm exec prisma migrate dev --name init  # no-op today: schema.prisma declares no models yet
+pnpm start:dev                            # http://localhost:5300
 ```
 
 ### Frontend — `client/`
@@ -69,8 +69,8 @@ yarn start:dev                            # http://localhost:5300
 ```bash
 cd client
 cp .env.example .env          # VITE_API_BASE_URL=http://localhost:5300
-yarn install
-yarn dev                      # http://localhost:3300
+pnpm install
+pnpm dev                      # http://localhost:3300
 ```
 
 ### Tests
@@ -78,9 +78,9 @@ yarn dev                      # http://localhost:3300
 There are **no product tests yet** — only the three placeholder tests that `nest new` and `create-vue` generate (`server/src/app.controller.spec.ts` and `server/test/app.e2e-spec.ts` assert `Hello World!`; `client/e2e/vue.spec.ts` asserts the scaffold heading). No test counts are quoted here because dependencies are not vendored in this repo and the suites have not been executed against it.
 
 ```bash
-cd server && yarn test        # Jest unit
-cd server && yarn test:e2e    # Jest + supertest
-cd client && yarn test:e2e    # Playwright (run `npx playwright install` first)
+cd server && pnpm test        # Jest unit
+cd server && pnpm test:e2e    # Jest + supertest
+cd client && pnpm test:e2e    # Playwright (run `pnpm exec playwright install` first)
 ```
 
 Known scaffold gap: `client/playwright.config.ts` still targets the `create-vue` default ports (`5173` dev / `4173` preview) while the Vite dev server is configured for `3300` — this needs reconciling before the Playwright suite is meaningful.

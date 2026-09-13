@@ -35,7 +35,7 @@ user-invocable: false
 
 `strict: true` enables: `strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `noImplicitThis`, `alwaysStrict`.
 
-> **Frontend resolution**: bundled by Vite, so use `module: "ESNext"` + `moduleResolution: "Bundler"`, and include `"DOM"` in `lib`. `.vue` files are type-checked via `vue-tsc` (`yarn type-check` / `vue-tsc --build`), which understands `<script setup lang="ts">` blocks — Vite itself does not type-check on `yarn dev`/`yarn build`'s transform step, so `vue-tsc` must be run explicitly (it already is, via `yarn build` → `run-p type-check "build-only"`).
+> **Frontend resolution**: bundled by Vite, so use `module: "ESNext"` + `moduleResolution: "Bundler"`, and include `"DOM"` in `lib`. `.vue` files are type-checked via `vue-tsc` (`pnpm type-check` / `vue-tsc --build`), which understands `<script setup lang="ts">` blocks — Vite itself does not type-check on `pnpm dev`/`pnpm build`'s transform step, so `vue-tsc` must be run explicitly (it already is, via `pnpm build` → `run-p type-check "build-only"`).
 
 Additional required flags:
 

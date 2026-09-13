@@ -107,17 +107,17 @@ constructor(private readonly prisma: PrismaService) {}
 # 1. Edit prisma/schema.prisma
 
 # 2. Generate + apply a dev migration (creates prisma/migrations/<timestamp>_<name>/)
-npx prisma migrate dev --name add_link_model
+pnpm exec prisma migrate dev --name add_link_model
 
 # 3. Regenerate the Prisma Client types (migrate dev does this automatically,
 #    but re-run explicitly after pulling someone else's migration)
-npx prisma generate
+pnpm exec prisma generate
 
 # Inspect/browse data locally
-npx prisma studio
+pnpm exec prisma studio
 
 # CI / production — apply already-committed migrations, never `migrate dev`
-npx prisma migrate deploy
+pnpm exec prisma migrate deploy
 ```
 
 **Rules:**
@@ -125,7 +125,7 @@ npx prisma migrate deploy
 - `prisma migrate dev` is a **local development** command only — it can prompt to reset the DB on drift. Never run it in CI/production; use `prisma migrate deploy` there.
 - Every schema change ships with its generated migration folder committed to `prisma/migrations/` — never hand-edit a migration SQL file after it has been applied anywhere.
 - Migration names: short, snake_case, describe the change (`add_link_model`, `add_link_owner_id`) — not `update`, `fix`, `wip`.
-- Run `npx prisma generate` after `yarn install` in any fresh clone/CI job so `@prisma/client` types exist before `tsc`/`nest build` runs.
+- Run `pnpm exec prisma generate` after `pnpm install` in any fresh clone/CI job so `@prisma/client` types exist before `tsc`/`nest build` runs.
 
 ---
 
