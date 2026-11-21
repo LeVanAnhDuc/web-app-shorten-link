@@ -18,7 +18,7 @@ user-invocable: false
 ## 2. Forms (Vuetify fields)
 
 - Every `v-text-field`/`v-select`/`v-textarea` gets a `label` prop (i18n'd) — Vuetify wires it to a real `<label>`. `placeholder` is never the label.
-- Errors only via `:error-messages` — Vuetify sets `aria-invalid` + `aria-describedby`. No disconnected error `<span>`.
+- Errors only via `:error-messages` — Vuetify links them with `aria-describedby`, but Vuetify 3.12 does **not** set `aria-invalid`: bind it yourself, `:aria-invalid="errors.url ? 'true' : undefined"` (verified in F1 E2E). No disconnected error `<span>`.
 - URL input: `type="url"`, `inputmode="url"`, `autocomplete="url"`, `spellcheck="false"`, `autocapitalize="off"`. Optional alias field says "optional" in its label or `hint`.
 - Submit with Enter: the field and `v-btn type="submit"` live in a `<form @submit.prevent>`.
 - Pending submit: `:loading="isPending"` on the `v-btn` (sets `aria-busy`); don't also disable the field silently.

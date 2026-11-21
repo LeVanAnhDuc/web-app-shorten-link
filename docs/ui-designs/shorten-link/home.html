@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shorten Link — F1 mock (Home)</title>
+<!-- Mock only. The app self-hosts these fonts via @fontsource and builds the UI with Vuetify. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/atkinson-hyperlegible-next@5.3.0/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/atkinson-hyperlegible-next@5.3.0/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/martian-mono@5.3.0/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/martian-mono@5.3.0/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+<style>
+  :root { --bg:#F7F8FA; --surface:#FFFFFF; --text:#1A1F3D; --muted:#565D77; --primary:#23306B; --on-primary:#FFFFFF;
+    --stub:#F4C542; --on-stub:#1A1F3D; --outline:#8A90A8; --divider:#D9DCE5; --error:#B42318; --success:#1E7A4C;
+    --overlay-shadow: 0 8px 24px rgb(0 0 0 / .18); }
+  :root.dark { --bg:#12142A; --surface:#1B1E38; --text:#ECEEF6; --muted:#A3A8C3; --primary:#9DB0FF; --on-primary:#12142A;
+    --stub:#E9B935; --on-stub:#1A1F3D; --outline:#6B7194; --divider:#2E3254; --error:#F97066; --success:#5BC88A;
+    --overlay-shadow: 0 8px 24px rgb(0 0 0 / .45); }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  html, body { margin:0; }
+  body { font-family:"Atkinson Hyperlegible Next", system-ui, sans-serif; background:var(--bg); color:var(--text);
+    min-height:100vh; transition: background-color 200ms ease, color 200ms ease; }
+  button { font-family:inherit; cursor:pointer; }
+  :focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+
+  .mockbar { background:var(--text); color:var(--bg); font-size:12.8px; padding:6px 16px; text-align:center; }
+  header { max-width:720px; margin:0 auto; padding:16px; display:flex; justify-content:space-between; align-items:center; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; }
+  .brand i { color:var(--primary); font-size:22px; }
+  .tools { display:flex; gap:4px; }
+  .icon-btn { min-width:44px; height:44px; border-radius:6px; border:0; background:transparent; color:var(--text);
+    display:inline-flex; align-items:center; justify-content:center; gap:6px; font-size:14px; font-weight:600; padding:0 10px;
+    transition: background-color 150ms ease; }
+  .icon-btn:hover { background:color-mix(in srgb, var(--text) 8%, transparent); }
+  .icon-btn i { font-size:20px; }
+
+  main { max-width:720px; margin:0 auto; padding:24px 16px 64px; }
+  h1 { font-size:31.25px; line-height:1.2; margin:0 0 8px; }
+  .sub { color:var(--muted); margin:0 0 24px; line-height:1.5; max-width:70ch; }
+
+  form { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; }
+  .field { flex:1 1 320px; position:relative; }
+  .field label { position:absolute; left:12px; top:-8px; padding:0 4px; background:var(--bg); font-size:12.8px; color:var(--muted); }
+  .field input { width:100%; height:48px; padding:0 16px; border:1px solid var(--outline); border-radius:6px; background:var(--surface);
+    color:var(--text); font:16px "Atkinson Hyperlegible Next", sans-serif; transition:border-color 150ms ease; }
+  .field input:focus { outline:none; border:2px solid var(--primary); padding:0 15px; }
+  .field.has-error input { border:2px solid var(--error); padding:0 15px; }
+  .field .msg { font-size:12.8px; color:var(--muted); margin:6px 0 0 16px; min-height:18px; display:flex; gap:4px; align-items:center; }
+  .field.has-error .msg { color:var(--error); }
+  .btn { height:48px; padding:0 24px; border:0; border-radius:6px; background:var(--primary); color:var(--on-primary);
+    font-weight:600; font-size:16px; display:inline-flex; align-items:center; gap:8px; transition:opacity 150ms ease; }
+  .btn:hover { opacity:.92; }
+  .btn[disabled] { opacity:.6; cursor:progress; }
+  .spin { animation:spin 800ms linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg) } }
+
+  /* result ticket */
+  .result { margin-top:32px; }
+  .result:focus { outline:none; } /* focus moved here only so screen readers read the result */
+  .result h2 { font-size:20px; margin:0 0 12px; }
+  .ticket { display:grid; grid-template-columns:1fr 24px 1.1fr; }
+  .left { background:var(--surface); border:1px solid var(--divider); border-right:0; border-radius:10px 0 0 10px; padding:24px; min-width:0; }
+  .left small { color:var(--muted); font-size:12.8px; display:flex; gap:6px; align-items:center; }
+  .left p { font-family:"Martian Mono", monospace; font-size:13px; line-height:1.6; color:var(--muted); margin:8px 0 0; word-break:break-all;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .perf { background:var(--stub); position:relative;
+    -webkit-mask: radial-gradient(circle 9px at 50% 0, #0000 98%, #000) top/100% 51% no-repeat, radial-gradient(circle 9px at 50% 100%, #0000 98%, #000) bottom/100% 51% no-repeat;
+            mask: radial-gradient(circle 9px at 50% 0, #0000 98%, #000) top/100% 51% no-repeat, radial-gradient(circle 9px at 50% 100%, #0000 98%, #000) bottom/100% 51% no-repeat; }
+  .perf::after { content:""; position:absolute; left:50%; top:14px; bottom:14px; border-left:2px dashed rgba(26,31,61,.4); transform:translateX(-1px); }
+  .stub { background:var(--stub); color:var(--on-stub); padding:24px 24px 24px 12px; border-radius:0 10px 10px 0; display:flex; flex-direction:column; gap:16px; min-width:0; }
+  .code { font-family:"Martian Mono", monospace; font-weight:600; font-size:32px; line-height:1.1; letter-spacing:.02em; }
+  .url { font-family:"Martian Mono", monospace; font-size:14px; margin-top:6px; word-break:break-all; }
+  .copy { align-self:flex-start; height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--on-stub); color:#fff;
+    font-weight:600; font-size:14px; display:inline-flex; gap:8px; align-items:center; }
+  .copy:focus-visible { outline-color:var(--on-stub); }
+  .anim .stub, .anim .perf { animation: printout 240ms cubic-bezier(.2,0,0,1) both; }
+  @keyframes printout { from { transform:translateX(-16px); opacity:0 } to { transform:none; opacity:1 } }
+  @media (prefers-reduced-motion: reduce) { .anim .stub, .anim .perf { animation:none } }
+
+  .points { margin-top:48px; display:grid; gap:12px; color:var(--muted); font-size:14px; }
+  .points div { display:flex; gap:10px; align-items:center; }
+  .points i { color:var(--primary); font-size:20px; }
+
+  .snack { position:fixed; left:50%; bottom:24px; transform:translate(-50%, 16px); opacity:0; background:var(--text); color:var(--bg);
+    padding:12px 16px; border-radius:10px; box-shadow:var(--overlay-shadow); display:flex; gap:8px; align-items:center; font-size:14px;
+    transition: opacity 200ms ease, transform 200ms ease; pointer-events:none; }
+  .snack.show { opacity:1; transform:translate(-50%, 0); }
+  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+  @media (max-width:600px) {
+    .ticket { grid-template-columns:1fr; }
+    .left { border-right:1px solid var(--divider); border-bottom:0; border-radius:10px 10px 0 0; }
+    .perf { height:24px;
+      -webkit-mask: radial-gradient(circle 9px at 0 50%, #0000 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 98%, #000) right/51% 100% no-repeat;
+              mask: radial-gradient(circle 9px at 0 50%, #0000 98%, #000) left/51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 98%, #000) right/51% 100% no-repeat; }
+    .perf::after { left:14px; right:14px; top:50%; bottom:auto; border-left:0; border-top:2px dashed rgba(26,31,61,.4); transform:translateY(-1px); }
+    .stub { border-radius:0 0 10px 10px; padding:16px 24px 24px; }
+    .btn { width:100%; justify-content:center; }
+  }
+</style>
+</head>
+<body>
+<div class="mockbar">Mock F1 — bấm thử được, dữ liệu giả, không gọi server</div>
+<header>
+  <div class="brand"><i class="mdi mdi-ticket-outline" aria-hidden="true"></i><span data-i18n="app.name">Shorten Link</span></div>
+  <div class="tools">
+    <button class="icon-btn" id="lang" type="button"><i class="mdi mdi-translate" aria-hidden="true"></i><span data-i18n="lang.switch">Tiếng Việt</span></button>
+    <button class="icon-btn" id="theme" type="button"><i class="mdi mdi-weather-night" aria-hidden="true"></i></button>
+  </div>
+</header>
+<main>
+  <h1 data-i18n="home.title">Shorten a link</h1>
+  <p class="sub" data-i18n="home.subtitle">Paste a long link and get a short one with a QR code. No account needed.</p>
+
+  <form id="form" novalidate>
+    <div class="field" id="field">
+      <label for="url" data-i18n="form.url.label">Long link</label>
+      <input id="url" type="url" inputmode="url" autocomplete="off" aria-describedby="url-msg"
+        value="https://example.com/blog/2026/11/how-we-ship-small-releases-every-day?utm_source=newsletter&utm_medium=email">
+      <div class="msg" id="url-msg" aria-live="polite"><span data-i18n="form.url.hint">Starts with http:// or https://</span></div>
+    </div>
+    <button class="btn" id="submit" type="submit"><i class="mdi mdi-link-variant" aria-hidden="true"></i><span data-i18n="form.submit">Shorten</span></button>
+  </form>
+
+  <section class="result" id="result" hidden tabindex="-1" aria-labelledby="result-h">
+    <h2 id="result-h" data-i18n="result.heading">Your short link</h2>
+    <div class="ticket" id="ticket">
+      <div class="left"><small><i class="mdi mdi-link" aria-hidden="true"></i><span data-i18n="result.original">Original</span></small><p id="orig"></p></div>
+      <div class="perf" aria-hidden="true"></div>
+      <div class="stub">
+        <div><div class="code" id="code"></div><div class="url" id="short"></div></div>
+        <button class="copy" id="copy" type="button"><i class="mdi mdi-content-copy" aria-hidden="true"></i><span data-i18n="action.copy">Copy</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="points" id="points">
+    <div><i class="mdi mdi-qrcode" aria-hidden="true"></i><span data-i18n="features.qr">A QR code comes with every link</span></div>
+    <div><i class="mdi mdi-pencil-outline" aria-hidden="true"></i><span data-i18n="features.alias">Pick a custom ending if you like</span></div>
+    <div><i class="mdi mdi-incognito" aria-hidden="true"></i><span data-i18n="features.anonymous">No sign-up, no account</span></div>
+  </div>
+</main>
+<div class="snack" id="snack" role="status" aria-live="polite"><i class="mdi mdi-check" aria-hidden="true"></i><span id="snack-t"></span></div>
+<div class="sr-only" id="announce" aria-live="polite"></div>
+
+<script>
+const T = {
+  en: { 'app.name':'Shorten Link', 'lang.switch':'Tiếng Việt', 'home.title':'Shorten a link',
+    'home.subtitle':'Paste a long link and get a short one with a QR code. No account needed.',
+    'form.url.label':'Long link', 'form.url.hint':'Starts with http:// or https://', 'form.submit':'Shorten', 'form.submitting':'Shortening…',
+    'result.heading':'Your short link', 'result.original':'Original', 'action.copy':'Copy', 'action.copied':'Copied',
+    'features.qr':'A QR code comes with every link', 'features.alias':'Pick a custom ending if you like', 'features.anonymous':'No sign-up, no account',
+    'error.url.required':'Paste a link to shorten.', 'error.url.invalid':"That doesn't look like a web link. Check it starts with http:// or https://.",
+    'a11y.copyCode':'Copy short link {code}', 'a11y.created':'Short link created: {shortUrl}', 'theme.toDark':'Switch to dark theme', 'theme.toLight':'Switch to light theme' },
+  vi: { 'app.name':'Shorten Link', 'lang.switch':'English', 'home.title':'Rút gọn link',
+    'home.subtitle':'Dán link dài, nhận link ngắn kèm mã QR. Không cần tài khoản.',
+    'form.url.label':'Link dài', 'form.url.hint':'Bắt đầu bằng http:// hoặc https://', 'form.submit':'Rút gọn', 'form.submitting':'Đang rút gọn…',
+    'result.heading':'Link ngắn của bạn', 'result.original':'Link gốc', 'action.copy':'Sao chép', 'action.copied':'Đã sao chép',
+    'features.qr':'Link nào cũng kèm mã QR', 'features.alias':'Có thể tự đặt đuôi link', 'features.anonymous':'Không cần đăng ký',
+    'error.url.required':'Hãy dán link cần rút gọn.', 'error.url.invalid':'Link này không hợp lệ. Kiểm tra link bắt đầu bằng http:// hoặc https://.',
+    'a11y.copyCode':'Sao chép link ngắn {code}', 'a11y.created':'Đã tạo link ngắn: {shortUrl}', 'theme.toDark':'Chuyển sang giao diện tối', 'theme.toLight':'Chuyển sang giao diện sáng' }
+};
+let lang = 'en', current = null, errKey = null;
+const $ = id => document.getElementById(id);
+const t = (k, v = {}) => T[lang][k].replace(/\{(\w+)\}/g, (_, n) => v[n]);
+
+function render() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+  const dark = document.documentElement.classList.contains('dark');
+  $('theme').setAttribute('aria-label', t(dark ? 'theme.toLight' : 'theme.toDark'));
+  $('theme').querySelector('i').className = 'mdi ' + (dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night');
+  $('field').classList.toggle('has-error', !!errKey);
+  $('url').setAttribute('aria-invalid', String(!!errKey));
+  $('url-msg').innerHTML = errKey
+    ? '<i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i><span>' + t(errKey) + '</span>'
+    : '<span>' + t('form.url.hint') + '</span>';
+  if (current) $('copy').setAttribute('aria-label', t('a11y.copyCode', { code: current.code }));
+}
+function validate(v) {
+  if (!v.trim()) return 'error.url.required';
+  try { const u = new URL(v.trim()); if (!/^https?:$/.test(u.protocol) || !u.hostname.includes('.')) return 'error.url.invalid'; }
+  catch { return 'error.url.invalid'; }
+  return null;
+}
+function code7() { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789'; return Array.from({length:7}, () => a[Math.floor(Math.random()*a.length)]).join(''); }
+function snack(msg) { $('snack-t').textContent = msg; $('snack').classList.add('show'); clearTimeout(snack.t); snack.t = setTimeout(() => $('snack').classList.remove('show'), 2000); }
+
+$('form').addEventListener('submit', e => {
+  e.preventDefault();
+  errKey = validate($('url').value); render();
+  if (errKey) { $('url').focus(); return; }
+  const btn = $('submit'); btn.disabled = true;
+  btn.innerHTML = '<i class="mdi mdi-loading spin" aria-hidden="true"></i><span>' + t('form.submitting') + '</span>';
+  setTimeout(() => {
+    const code = code7();
+    current = { code, shortUrl: 'localhost:5300/' + code, originalUrl: $('url').value.trim() };
+    $('orig').textContent = current.originalUrl; $('code').textContent = code; $('short').textContent = current.shortUrl;
+    const r = $('result'); r.hidden = false; $('ticket').classList.remove('anim'); void $('ticket').offsetWidth; $('ticket').classList.add('anim');
+    $('points').hidden = true;
+    btn.disabled = false; btn.innerHTML = '<i class="mdi mdi-link-variant" aria-hidden="true"></i><span data-i18n="form.submit">' + t('form.submit') + '</span>';
+    render(); r.focus(); $('announce').textContent = t('a11y.created', { shortUrl: current.shortUrl });
+  }, 600);
+});
+$('url').addEventListener('input', () => { if (errKey) { errKey = null; render(); } });
+$('copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText('http://' + current.shortUrl); } catch {}
+  const b = $('copy'); b.querySelector('i').className = 'mdi mdi-check'; b.querySelector('span').textContent = t('action.copied');
+  snack(t('action.copied'));
+  setTimeout(() => { b.querySelector('i').className = 'mdi mdi-content-copy'; b.querySelector('span').textContent = t('action.copy'); }, 2000);
+});
+$('lang').addEventListener('click', () => { lang = lang === 'en' ? 'vi' : 'en'; render(); });
+$('theme').addEventListener('click', () => { document.documentElement.classList.toggle('dark'); render(); });
+if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+render();
+</script>
+</body>
+</html>

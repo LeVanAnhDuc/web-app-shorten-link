@@ -1,0 +1,50 @@
+{
+  "app": {
+    "name": "Shorten Link",
+    "skipToMain": "Bỏ qua, tới nội dung chính"
+  },
+  "home": {
+    "title": "Rút gọn link",
+    "subtitle": "Dán link dài, nhận link ngắn kèm mã QR. Không cần tài khoản.",
+    "subtitleNoQr": "Dán link dài, nhận link ngắn. Không cần tài khoản."
+  },
+  "form": {
+    "url": {
+      "label": "Link dài",
+      "hint": "Bắt đầu bằng http:// hoặc https://"
+    },
+    "submit": "Rút gọn",
+    "submitting": "Đang rút gọn…"
+  },
+  "result": {
+    "heading": "Link ngắn của bạn",
+    "original": "Link gốc"
+  },
+  "action": {
+    "copy": "Sao chép",
+    "copied": "Đã sao chép"
+  },
+  "features": {
+    "heading": "Bạn nhận được gì",
+    "anonymous": "Không cần đăng ký"
+  },
+  "error": {
+    "url": {
+      "required": "Hãy dán link cần rút gọn.",
+      "invalid": "Link này không hợp lệ. Kiểm tra link bắt đầu bằng http:// hoặc https://."
+    },
+    "network": "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.",
+    "copy": "Không sao chép được. Hãy chọn link và sao chép thủ công."
+  },
+  "a11y": {
+    "copyCode": "Sao chép link ngắn {code}",
+    "created": "Đã tạo link ngắn: {shortUrl}"
+  },
+  "theme": {
+    "toDark": "Chuyển sang giao diện tối",
+    "toLight": "Chuyển sang giao diện sáng"
+  },
+  "lang": {
+    "switch": "English"
+  }
+}

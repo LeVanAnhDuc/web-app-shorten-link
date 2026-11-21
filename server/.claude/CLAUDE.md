@@ -13,8 +13,8 @@ Chi tiết version/packages xem `server/package.json` (nguồn đúng). Tóm t�
 - **Runtime**: Node.js + TypeScript
 - **Framework**: NestJS 11
 - **Database**: PostgreSQL (DB `shortenlink`) qua **Prisma 6** (`@prisma/client`) — không MongoDB, không Mongoose
-- **Rate limiting**: `@nestjs/throttler` (bảo vệ endpoint public `POST /api/links`)
-- **Short code generation**: `nanoid`
+- **Rate limiting**: `@nestjs/throttler` (bảo vệ endpoint public `POST /api/links`) — chưa cài, thuộc F6
+- **Short code generation**: `node:crypto` `randomInt` (`src/modules/links/code-generator.ts`) — không dùng `nanoid` (v5 chỉ ESM, vướng Jest)
 - **Validation**: `class-validator` + `class-transformer` (Nest `ValidationPipe`)
 - **Test**: Jest (`*.spec.ts` unit, `*.e2e-spec.ts` trong `test/`)
 - **Dev port**: `:5300`
@@ -57,16 +57,17 @@ pnpm exec prisma studio                        # browse local DB
 
 ## Architecture
 
-> **Phase 1 chưa build.** `src/` hiện là scaffold mặc định của Nest CLI. Boot Sequence / Data model / Endpoints dưới đây là **thiết kế đích** theo `docs/project-goals.md` + `docs/erd.md` (spec P1 cũ đã xoá 2026-11-21, sẽ viết lại) — chưa có trong code; `nanoid`, `@nestjs/throttler`, `class-validator` chưa cài.
+> **Trạng thái (F1, 2026-11-21):** đã có model `Link` + migration, `PrismaModule`, `AppConfig`, `POST /api/links`. Chưa có: `GET /:code` (F2), `GET /api/links/:code` (F4), alias + `409` (F5), throttler (F6) — lộ trình ở `docs/unfinished-features.md`.
 
 ### Boot Sequence
 
 `main.ts` bootstraps `AppModule` via `NestFactory.create()`:
 
-1. Global `ValidationPipe` registered (`whitelist: true, forbidNonWhitelisted: true`) — every DTO validated before reaching a controller method.
-2. `AppModule` imports `PrismaModule` (global, exposes `PrismaService`) + feature modules (`LinksModule`).
-3. `ThrottlerModule` configured (global or per-route) to rate-limit public endpoints.
-4. Listen on `PORT` env var, default `5300`.
+1. `loadEnv()` nạp `.env` bằng `process.loadEnvFile` (Node built-in — không `dotenv`/`@nestjs/config` ở runtime).
+2. `AppModule` imports `AppConfigModule` (global `AppConfig`: `PUBLIC_BASE_URL`, `CLIENT_ORIGIN`), `PrismaModule` (global `PrismaService`), `LinksModule`.
+3. `configureApp(app)` (`src/app.setup.ts`): global `ValidationPipe` (`whitelist`, `forbidNonWhitelisted`, `transform`) + CORS cho `CLIENT_ORIGIN`. E2E dùng chung hàm này.
+4. *(F6)* `ThrottlerModule` rate-limit `POST /api/links`.
+5. Listen on `PORT` env var, default `5300`.
 
 ### Module Pattern
 
@@ -82,7 +83,7 @@ Single Prisma model `Link` (`prisma/schema.prisma`): `code` (`@unique`), `origin
 
 | Endpoint                | Mô tả                                                          |
 | -------------------------- | ------------------------------------------------------------------ |
-| `POST /api/links`         | Tạo short link. Body `{ url, customAlias? }`. `409` nếu alias trùng. |
+| `POST /api/links`         | ✅ F1. Tạo short link. Body `{ url }` (`customAlias` từ F5, `409` nếu trùng). |
 | `GET /api/links/:code`    | Lấy metadata 1 link (dùng cho local history hiển thị `clickCount`). |
 | `GET /:code`              | Redirect `302` về `originalUrl`, tăng `clickCount`. `404` nếu không tồn tại. |
 
@@ -90,7 +91,7 @@ Chi tiết status code, response shape, validation rule → `standard-restful-ap
 
 ### Validation
 
-DTO class + `class-validator` decorator (`@IsUrl`, `@Matches`, …), validated bởi Nest's global `ValidationPipe`. Không dùng Joi (đó là convention của project khác) — xem `module-struct/SKILL.md` cho ví dụ DTO.
+DTO class + `class-validator` decorator, validated bởi Nest's global `ValidationPipe`. URL dùng decorator riêng `@IsPublicHttpUrl()` (luật ở `src/modules/links/url-rules.ts`, DR-4) — `@IsUrl` một mình vẫn nhận `http://127.0.0.1`. Luật cần config (DR-5, host của chính shortener) kiểm ở service. Không dùng Joi (đó là convention của project khác) — xem `module-struct/SKILL.md` cho ví dụ DTO.
 
 ### Error Handling
 
@@ -99,9 +100,9 @@ Dùng NestJS `HttpException` subclasses trực tiếp (`NotFoundException`, `Con
 ### Key Conventions
 
 - Mọi truy cập DB đi qua `PrismaService` (inject qua constructor) — **không** `new PrismaClient()` ở nơi khác.
-- Env vars đọc qua `process.env`/`ConfigService` — không hardcode `DATABASE_URL` hay secret khác.
+- Env vars đọc qua `AppConfig` (inject) — không hardcode `DATABASE_URL` hay secret khác; `DATABASE_URL` chỉ Prisma đọc.
 - `GET /:code` (redirect) nằm ở controller riêng, **không** dưới prefix `/api` — xem `standard-restful-api/SKILL.md` để hiểu lý do.
-- Short code sinh bằng `nanoid` (charset/length chốt ở lúc implement P1 — xem `docs/project-goals.md` §9 Open Question #1).
+- Short code: 7 ký tự, base62 bỏ `0 O 1 l I`; trùng `P2002` → sinh lại tối đa 3 lần (`docs/specs/shorten-link/design.md` DR-2, DR-3).
 
 ## Quality & Workflow
 
@@ -125,4 +126,4 @@ pnpm build    # tsc via nest build — surfaces type errors
 | Pattern              | Ý nghĩa           | Vị trí                 |
 | ------------------------ | -------------------- | -------------------------- |
 | `*.spec.ts`             | Unit test           | Co-located cạnh source     |
-| `*.e2e-spec.ts`         | E2E test            | `test/`                    |
+| `*.e2e-spec.ts`         | E2E test (supertest) | `test/` — chạy trên DB `shortenlink_test`, Jest global setup tự tạo + `migrate deploy` |

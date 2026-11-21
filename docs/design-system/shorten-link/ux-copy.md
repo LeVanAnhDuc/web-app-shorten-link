@@ -18,6 +18,9 @@ it works inside. Sentence case. No exclamation marks, no apologies, no jokes in 
 | --- | --- | --- |
 | `home.title` | Shorten a link | Rút gọn link |
 | `home.subtitle` | Paste a long link and get a short one with a QR code. No account needed. | Dán link dài, nhận link ngắn kèm mã QR. Không cần tài khoản. |
+| `home.subtitleNoQr` | Paste a long link and get a short one. No account needed. | Dán link dài, nhận link ngắn. Không cần tài khoản. |
+| `app.skipToMain` | Skip to main content | Bỏ qua, tới nội dung chính |
+| `features.heading` | What you get | Bạn nhận được gì |
 | `form.url.label` | Long link | Link dài |
 | `form.url.hint` | Starts with http:// or https:// | Bắt đầu bằng http:// hoặc https:// |
 | `form.alias.toggle` | Choose your own ending | Tự đặt đuôi link |

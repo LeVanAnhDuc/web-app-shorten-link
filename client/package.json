@@ -16,6 +16,8 @@
     "lint:eslint": "eslint . --fix --cache"
   },
   "dependencies": {
+    "@fontsource/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource/martian-mono": "^5.3.0",
     "@mdi/font": "^7.4.47",
     "@tanstack/vue-query": "^5.101.4",
     "@vee-validate/zod": "^4.15.1",

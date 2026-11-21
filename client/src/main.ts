@@ -1,5 +1,10 @@
-import './assets/main.css'
+import '@fontsource/atkinson-hyperlegible-next/400.css'
+import '@fontsource/atkinson-hyperlegible-next/600.css'
+import '@fontsource/atkinson-hyperlegible-next/700.css'
+import '@fontsource/martian-mono/400.css'
+import '@fontsource/martian-mono/600.css'
 import './assets/tailwind.css'
+import './assets/app.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

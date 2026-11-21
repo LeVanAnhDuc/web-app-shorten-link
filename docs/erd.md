@@ -16,7 +16,7 @@
 erDiagram
     LINK {
         String id PK "uuid, @default(uuid())"
-        String code UK "short code (nanoid) hoặc customAlias, indexed"
+        String code UK "short code 7 ký tự (node:crypto) hoặc customAlias, indexed"
         String originalUrl "link gốc, http/https"
         String customAlias "nullable — null nếu code là auto-gen"
         Int clickCount "@default(0) — tổng lượt redirect"
@@ -32,12 +32,14 @@ erDiagram
 | Field | Kiểu (Prisma) | Constraint | Ghi chú |
 |---|---|---|---|
 | `id` | `String @id @default(uuid())` | PK | uuid (có thể đổi sang `cuid()` nếu cần thứ tự sort tốt hơn — quyết định ở implementation, không đổi ngữ nghĩa ERD). |
-| `code` | `String @unique` | UK, indexed | Short code — hoặc do `nanoid` sinh tự động, hoặc chính là `customAlias` đã được validate + check trùng. Đây là khoá lookup chính cho `GET /:code` (redirect) — **phải** có index unique để redirect nhanh. |
+| `code` | `String @unique` | UK, indexed | Short code — hoặc do server sinh tự động (7 ký tự, `node:crypto`), hoặc chính là `customAlias` đã được validate + check trùng. Đây là khoá lookup chính cho `GET /:code` (redirect) — **phải** có index unique để redirect nhanh. |
 | `originalUrl` | `String` | required | Link gốc, đã validate `http`/`https` ở tầng application (không phải DB constraint). |
-| `customAlias` | `String?` | nullable | `null` nếu `code` là auto-gen (`nanoid`); có giá trị (= `code`) nếu user tự chọn alias. Tách field này khỏi `code` để phân biệt "link do hệ thống sinh" vs "link do user đặt tên" (phục vụ thống kê/UX sau này), dù giá trị runtime trùng `code`. |
+| `customAlias` | `String?` | nullable | `null` nếu `code` là auto-gen; có giá trị (= `code`) nếu user tự chọn alias. Tách field này khỏi `code` để phân biệt "link do hệ thống sinh" vs "link do user đặt tên" (phục vụ thống kê/UX sau này), dù giá trị runtime trùng `code`. |
 | `clickCount` | `Int @default(0)` | required | Tăng mỗi lần `GET /:code` redirect thành công (302). Không breakdown geo/device (đó là P3 — cần bảng riêng, ví dụ `link_clicks`, khi tới lúc). |
 | `createdAt` | `DateTime @default(now())` | required | Immutable — không có `updatedAt` ở P1 vì record không bị sửa (chỉ `clickCount` tăng — cân nhắc thêm `updatedAt` nếu P3 cho phép sửa `originalUrl`). |
 | `ownerId` | `String?` | nullable | **Chuẩn bị cho P2** — gắn user khi đã login qua IDMS. Luôn `null` ở P1 (không có auth). Không phải FK trong DB (xem ghi chú external reference). |
+
+> **Trạng thái:** model `Link` đã có trong `server/prisma/schema.prisma` từ F1 — migration đầu `prisma/migrations/*_init_link` (2026-11-21).
 
 ## Index chính
 
@@ -47,7 +49,7 @@ erDiagram
 ## Notes (semantics ngoài schema)
 
 ### `code` vs `customAlias`
-- Khi user **không** truyền `customAlias`: BE sinh `code` bằng `nanoid` (độ dài/charset cụ thể — xem `project-goals.md` §9 Open Questions), `customAlias = null`.
+- Khi user **không** truyền `customAlias`: BE sinh `code` 7 ký tự từ bảng base62 bỏ `0 O 1 l I` (`specs/shorten-link/design.md` DR-2), `customAlias = null`.
 - Khi user **có** truyền `customAlias`: BE validate format (độ dài, charset cho phép, không trùng reserved keyword) + check `@@unique([code])` chưa tồn tại → nếu hợp lệ, `code = customAlias` và lưu luôn vào `customAlias`. Trùng → `409 Conflict` (không tự động fallback sang code khác).
 - Vì `code` là unique toàn cục, auto-gen và custom-alias **dùng chung 1 namespace** — không thể trùng nhau dù nguồn gốc khác nhau.
 
