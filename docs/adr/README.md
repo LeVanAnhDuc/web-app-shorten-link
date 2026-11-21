@@ -18,4 +18,6 @@ Tạo ADR khi quyết định:
 
 ## Trạng thái hiện tại
 
-Chưa có ADR nào — dự án đang ở giai đoạn bootstrap (docs source-of-truth, chưa build P1). ADR đầu tiên sẽ được thêm khi có quyết định kiến trúc thực tế cần ghi lại trong quá trình implement P1 trở đi.
+| ADR | Quyết định | Trạng thái |
+| --- | --- | --- |
+| [0001](./0001-design-system-bootstrap.md) | Design system: concept "claim ticket", palette ink blue + stub yellow, Atkinson Hyperlegible Next + Martian Mono | Proposed |

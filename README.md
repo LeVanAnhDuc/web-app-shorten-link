@@ -14,7 +14,7 @@
   - The full Phase 1 library stack is registered and verified to coexist: Vuetify 3 (MDI icon set), Tailwind v4 imported without its preflight layer so it does not fight Vuetify's reset, Pinia, Vue Router, TanStack Vue Query, and `vue-i18n` with `en`/`vi` message skeletons.
   - Pre-configured Axios client (`src/lib/axios.ts`) reading its base URL from `VITE_API_BASE_URL`.
 - **Design documentation as the source of truth (`docs/`)**
-  - `project-goals.md` (positioning, roadmap P1–P3, goals/non-goals), and `erd.md` (the planned `Link` model). The Phase 1 spec and UI design are being redone: the old spec, Home mock and SuperDesign tokens were removed, and the new design system will live in `design-system/shorten-link/`.
+  - `project-goals.md` (positioning, roadmap P1–P3, goals/non-goals), and `erd.md` (the planned `Link` model). The Phase 1 spec and UI design are being redone: the old spec, Home mock and SuperDesign tokens were removed, and the new design system lives in `design-system/shorten-link/` (decision in `adr/0001-design-system-bootstrap.md`).
 
 ### Not built yet
 
