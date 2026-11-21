@@ -1,12 +1,14 @@
 # Server — Backend API
 
-Với bất kì yêu cầu nào của user nếu chưa rõ vấn đề hoặc cần thêm thông tin hãy hỏi lại user trước khi tiến hành làm. Tránh tự suy luận.
+Khi yêu cầu mơ hồ ở điểm ảnh hưởng tới kết quả (scope, data model, API contract) thì hỏi lại; còn lại đọc rule/skill rồi làm.
 
-NestJS REST API backend cho `web-app-shorten-link`. Tạo short link, redirect + đếm click, lưu trữ qua Prisma + PostgreSQL. Phase 1: **anonymous, không auth** (auth qua IDMS OIDC là Phase 2 — không tự dựng auth trước khi có yêu cầu).
+**File Sync Rule**: tạo mới hoặc xoá file/folder cấp module trong `src/` (vd `src/modules/<feature>/`, `src/prisma/`) → cập nhật lại phần mô tả tương ứng trong file này và skill liên quan trong cùng commit.
+
+NestJS REST API backend cho `web-app-shorten-link`. Tạo short link, redirect + đếm click, lưu trữ qua Prisma + PostgreSQL. Phase 1: **anonymous, không auth** (auth qua Ducker ID OIDC là Phase 2 — không tự dựng auth trước khi có yêu cầu).
 
 ## Tech Stack
 
-Chi tiết version/packages xem `.claude/techstack/backend.md` (repo `.claude` gốc). Tóm tắt:
+Chi tiết version/packages xem `server/package.json` (nguồn đúng). Tóm tắt:
 
 - **Runtime**: Node.js + TypeScript
 - **Framework**: NestJS 11
@@ -16,7 +18,7 @@ Chi tiết version/packages xem `.claude/techstack/backend.md` (repo `.claude` g
 - **Validation**: `class-validator` + `class-transformer` (Nest `ValidationPipe`)
 - **Test**: Jest (`*.spec.ts` unit, `*.e2e-spec.ts` trong `test/`)
 - **Dev port**: `:5300`
-- **Auth**: KHÔNG có ở Phase 1. Phase 2 sẽ dùng IDMS OAuth/OIDC client — không hand-roll JWT/session trước đó.
+- **Auth**: KHÔNG có ở Phase 1. Phase 2 sẽ dùng Ducker ID OAuth/OIDC client — không hand-roll JWT/session trước đó.
 
 ## Skills
 
@@ -24,13 +26,13 @@ Thư mục `.claude/skills/` chứa các file hướng dẫn coding convention.
 
 | Khi nào                                                             | Skill files cần đọc                             |
 | ---------------------------------------------------------------------- | -------------------------------------------------- |
-| Viết/review BẤT KỲ code (mọi ngôn ngữ) — nguyên tắc chung             | `standard-coding-universal/SKILL.md`              |
 | Viết/review `.ts` (type safety, tsconfig, decorator, async, imports) | `standard-typescript/SKILL.md` (bản Node/NestJS)  |
-| Đụng input user / rate-limit / redirect / config / secret            | `standard-security/SKILL.md` (bản BE)             |
 | Viết/review REST API endpoint, controller, request/response          | `standard-restful-api/SKILL.md`                   |
 | Scaffold/review module NestJS: controller, service, module, dto      | `module-struct/SKILL.md`                          |
 | Viết/review `schema.prisma`, query, migration, `PrismaService`        | `standard-prisma/SKILL.md`                        |
 | Thiết kế hệ thống backend, resilience, data integrity, architecture   | `standard-backend-engineering-mindset/SKILL.md`   |
+
+Skill dùng chung ở `<project>/.claude/skills/` (không nằm trong `server/.claude/skills/`): `standard-coding-universal` (mọi code) và `standard-security` (§1 + §2 — khi đụng input user / rate-limit / redirect / config / secret).
 
 **Không có** `standard-mongodb`/`standard-jwt` trong project này — stack không dùng MongoDB hay JWT tự dựng.
 
@@ -54,6 +56,8 @@ pnpm exec prisma studio                        # browse local DB
 ```
 
 ## Architecture
+
+> **Phase 1 chưa build.** `src/` hiện là scaffold mặc định của Nest CLI. Boot Sequence / Data model / Endpoints dưới đây là **thiết kế đích** theo `docs/project-goals.md` + `docs/erd.md` (spec P1 cũ đã xoá 2026-11-21, sẽ viết lại) — chưa có trong code; `nanoid`, `@nestjs/throttler`, `class-validator` chưa cài.
 
 ### Boot Sequence
 
@@ -97,13 +101,9 @@ Dùng NestJS `HttpException` subclasses trực tiếp (`NotFoundException`, `Con
 - Mọi truy cập DB đi qua `PrismaService` (inject qua constructor) — **không** `new PrismaClient()` ở nơi khác.
 - Env vars đọc qua `process.env`/`ConfigService` — không hardcode `DATABASE_URL` hay secret khác.
 - `GET /:code` (redirect) nằm ở controller riêng, **không** dưới prefix `/api` — xem `standard-restful-api/SKILL.md` để hiểu lý do.
-- Short code sinh bằng `nanoid` (charset/length chốt ở lúc implement P1 — xem `docs/specs/shorten-link-p1/design.md` Open Question #1).
+- Short code sinh bằng `nanoid` (charset/length chốt ở lúc implement P1 — xem `docs/project-goals.md` §9 Open Question #1).
 
 ## Quality & Workflow
-
-### Post-Task Self-Review
-
-Pattern self-review 3 bước (review → phản biện → refactor) đã được lift lên root — xem `.claude/CLAUDE.md` (repo `.claude` gốc) mục **Post-Task Self-Review Pattern**. Áp dụng cho mọi Side, không duplicate ở đây.
 
 ### Quality Check Before Handover
 

@@ -1,6 +1,6 @@
 # Shorten Link (web-app-shorten-link)
 
-Public, anonymous URL shortener — paste a long URL, get a short link plus a client-side QR code. Monorepo of `server/` (NestJS 11 + Prisma 6 + PostgreSQL, dev port `:5300`) and `client/` (Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4, dev port `:3300`); the repo is at **scaffold stage** — design docs and the approved Home mock exist, but no shortener code (no `Link` model, no `/api/links`, no redirect) is implemented yet.
+Public, anonymous URL shortener — paste a long URL, get a short link plus a client-side QR code. Monorepo of `server/` (NestJS 11 + Prisma 6 + PostgreSQL, dev port `:5300`) and `client/` (Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4, dev port `:3300`); the repo is at **scaffold stage** — project goals and the ERD exist (the Phase 1 spec and UI design are being redone with the `ui-ux-pro-max` plugin), but no shortener code (no `Link` model, no `/api/links`, no redirect) is implemented yet.
 
 ## Commands
 
@@ -34,9 +34,9 @@ pnpm test:e2e      # Playwright E2E
 pnpm lint          # oxlint --fix + eslint --fix
 ```
 
-## README (REQUIRED — keep in sync with features)
+## README — keep `## Features` in sync
 
-`README.md` describes what the app does for its users — it is not a boilerplate page. Every commit that adds or changes user-facing behaviour (`feat:`) MUST update the `## Features` section of `README.md` in the same branch, before merging — one short English bullet in the existing style.
+`README.md` describes what the app does for its users — it is not a boilerplate page. Every commit that adds or changes user-facing behaviour (`feat:`) also updates the `## Features` section of `README.md` in the same branch, before merging — one short English bullet in the existing style.
 
 While touching README, refresh any stale numbers you notice (test counts, stack versions).
 

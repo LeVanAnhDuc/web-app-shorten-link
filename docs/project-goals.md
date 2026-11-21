@@ -11,7 +11,7 @@
 
 **Tên dự án**: `web-app-shorten-link` — dịch vụ **rút gọn link (URL shortener)**.
 
-**Định vị**: khởi đầu là shortener **public, ẩn danh, UI-first** — bất kỳ ai cũng dán link dài vào và nhận link ngắn ngay, không cần tài khoản. Dài hạn trở thành **app vệ tinh đầu tiên** của constellation IDMS (`web-app-store`) — đăng nhập qua IDMS bằng OAuth/OIDC, mở khoá quản lý link per-user + analytics chi tiết.
+**Định vị**: khởi đầu là shortener **public, ẩn danh, UI-first** — bất kỳ ai cũng dán link dài vào và nhận link ngắn ngay, không cần tài khoản. Dài hạn trở thành **app vệ tinh đầu tiên** của constellation IDMS (`web-app-ducker-id`) — đăng nhập qua IDMS bằng OAuth/OIDC, mở khoá quản lý link per-user + analytics chi tiết.
 
 **Một câu**: dán link dài → nhận link ngắn + QR ngay lập tức; sau này đăng nhập (qua IDMS) để quản lý link của mình.
 
@@ -32,10 +32,10 @@
 | Phase | Nội dung | Auth |
 |---|---|---|
 | **P1 (build ngay)** | Public shortener: tạo short link + redirect + click counter + PostgreSQL. UI hoàn chỉnh (form, copy, QR, local history). Hoàn toàn ẩn danh. | ❌ |
-| **P2 (sau)** | Tích hợp **OAuth/OIDC client của IDMS** (`web-app-store`) → login. Link tạo khi đã login gắn `ownerId`. | ✅ qua IDMS |
+| **P2 (sau)** | Tích hợp **OAuth/OIDC client của IDMS** (`web-app-ducker-id`) → login. Link tạo khi đã login gắn `ownerId`. | ✅ qua IDMS |
 | **P3 (sau)** | Quản lý per-user: dashboard "link của tôi", analytics chi tiết (geo/device/referrer), sửa/xoá, expiration, custom domain, admin moderation. | ✅ |
 
-Chi tiết Phase 1 (functional scope BE/FE + E2E matrix): [`specs/shorten-link-p1/design.md`](./specs/shorten-link-p1/design.md).
+Chi tiết Phase 1 (functional scope BE/FE + E2E matrix): spec cũ đã xoá 2026-11-21 — viết lại ở `specs/<feature-name>/design.md` sau khi design lại UI.
 
 ---
 
@@ -49,7 +49,7 @@ Chi tiết Phase 1 (functional scope BE/FE + E2E matrix): [`specs/shorten-link-p
 - **G5 — Lịch sử cục bộ**: link vừa tạo lưu **localStorage** (vì ẩn danh) — list có copy / QR / mở / xoá-khỏi-history. Hiện `clickCount` (fetch theo code).
 
 ### Goals — Phase 2 (định hướng, spec riêng khi tới)
-- **G6 — SSO qua IDMS**: `web-app-shorten-link` đăng ký làm OAuth client của `web-app-store`, Authorization Code + PKCE. Link tạo khi đã login gắn `ownerId`.
+- **G6 — SSO qua IDMS**: `web-app-shorten-link` đăng ký làm OAuth client của `web-app-ducker-id`, Authorization Code + PKCE. Link tạo khi đã login gắn `ownerId`.
 - **G7 — Quản lý link của tôi**: user login xem/sửa/xoá link mình đã tạo (server-side, không chỉ localStorage).
 
 ### Goals — Phase 3 (định hướng)
@@ -67,7 +67,7 @@ Rõ ràng **KHÔNG** thuộc scope của Phase 1 (một số dời sang P2/P3 nh
 - **Không có analytics chi tiết** geo/device/referrer — P1 chỉ đếm tổng `clickCount`. (P3)
 - **Không có expiration, password-protected link, custom domain.** (P3)
 - **Không sửa/xoá link ở server** — P1 chỉ cho xoá khỏi **local history** (không xoá bản ghi DB, redirect vẫn hoạt động). (P3)
-- **Không gộp thành Next.js/Nuxt fullstack** — giữ format monorepo `server/` (NestJS API) + `client/` (Vue SPA) tách rời, đúng format-clone từ `web-app-store-server-client`.
+- **Không gộp thành Next.js/Nuxt fullstack** — giữ format monorepo `server/` (NestJS API) + `client/` (Vue SPA) tách rời, đúng format-clone từ `web-app-ducker-id`.
 - **Không phải link management đa tenant / team** — single global namespace cho `code` ở mọi phase hiện tại.
 
 ---
@@ -91,9 +91,9 @@ Rõ ràng **KHÔNG** thuộc scope của Phase 1 (một số dời sang P2/P3 nh
 |---|---|
 | **Backend** | NestJS + Prisma 6 + PostgreSQL, `@nestjs/throttler` (rate-limit), `nanoid` (sinh short code). Package manager `pnpm`, test `Jest`. Dev port **`:5300`**. DB name `shortenlink`. |
 | **Frontend** | Vue 3 + Vite + TypeScript, Vuetify 3 (component library) + Tailwind v4 (utility), Pinia (client state — local history), Vue Router, TanStack Vue Query (server state), VeeValidate + Zod (form + schema validation), `vue-i18n` (EN/VI), `axios` (HTTP), `qrcode` (QR client-side), Playwright (E2E). Package manager `pnpm`. Dev port **`:3300`**. |
-| **OAuth client (P2, chưa dùng ở P1)** | TBD khi vào spec P2 — client OIDC của `web-app-store` (IDMS), lib cụ thể quyết định lúc đó. |
+| **OAuth client (P2, chưa dùng ở P1)** | TBD khi vào spec P2 — client OIDC của `web-app-ducker-id` (IDMS), lib cụ thể quyết định lúc đó. |
 
-Chi tiết version cụ thể: `.claude/techstack/backend.md`, `.claude/techstack/frontend.md`.
+Chi tiết version cụ thể: `server/package.json`, `client/package.json`.
 
 ---
 
@@ -119,4 +119,5 @@ Chi tiết version cụ thể: `.claude/techstack/backend.md`, `.claude/techstac
 
 | Date | Change |
 |---|---|
+| 2026-11-21 | Xoá design cũ (spec P1, mock Home, SuperDesign, design system Ember/Signal Teal) + `.claude/techstack/` — design lại bằng `ui-ux-pro-max`. |
 | 2026-07-24 | Initial — định vị `web-app-shorten-link`, roadmap P1–P3, goals/non-goals P1, tech stack, NFR. Port từ `_bootstrap/design.md` §1–§4. |

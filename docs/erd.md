@@ -2,7 +2,7 @@
 
 > Schema PostgreSQL (Prisma) cho **`web-app-shorten-link`**. Source-of-truth: file này (sync **TAY** với `server/prisma/schema.prisma`).
 > Render: GitHub native, hoặc VS Code extension `bierner.markdown-mermaid`.
-> Phạm vi hiện tại (P1): chỉ model `Link`. Chưa có bảng `User` — ownership thực tế (`ownerId`) sẽ được resolve qua IDMS (`web-app-store`) ở P2 (xem [External reference pattern](#external-reference-pattern-ownerid--p2)).
+> Phạm vi hiện tại (P1): chỉ model `Link`. Chưa có bảng `User` — ownership thực tế (`ownerId`) sẽ được resolve qua IDMS (`web-app-ducker-id`) ở P2 (xem [External reference pattern](#external-reference-pattern-ownerid--p2)).
 
 ## Module groups
 
@@ -56,9 +56,9 @@ erDiagram
 - P3 khi cần breakdown geo/device/referrer sẽ cần thêm bảng con (vd `link_clicks { id, linkId FK, ip, country, deviceType, referrer, createdAt }`) — đây là mở rộng, không phá vỡ field `clickCount` hiện tại (vẫn giữ làm tổng nhanh, tránh `COUNT(*)` mỗi lần hiển thị).
 
 ### External reference pattern (`ownerId` — P2)
-- `web-app-shorten-link` KHÔNG share database với IDMS (`web-app-store`).
+- `web-app-shorten-link` KHÔNG share database với IDMS (`web-app-ducker-id`).
 - Khi P2 implement OAuth login, `ownerId` sẽ lưu `User.id` (dạng string, ví dụ uuid) trỏ về user bên IDMS như một **external reference** — không có FK constraint DB-level, không thể `JOIN` trực tiếp.
-- Lookup profile chủ link (nếu cần hiển thị) sẽ gọi API của IDMS (`GET /users/:id` hoặc `/oauth/userinfo` với access token), tương tự pattern satellite app đã áp dụng ở `web-app-store-server-client` (`docs/erd.md` §External reference pattern của project đó).
+- Lookup profile chủ link (nếu cần hiển thị) sẽ gọi API của IDMS (`GET /users/:id` hoặc `/oauth/userinfo` với access token), tương tự pattern satellite app đã áp dụng ở `web-app-ducker-id` (`docs/erd.md` §External reference pattern của project đó).
 
 ### Soft-delete — không có ở P1
 - P1 không hỗ trợ xoá link ở server (Non-Goal — xem `project-goals.md` §5). Không có field `deletedAt`.
