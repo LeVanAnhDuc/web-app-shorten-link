@@ -1,498 +1,86 @@
 ---
 name: standard-accessibility
-description: Web accessibility standards targeting WCAG 2.1 AA compliance for HTML/CSS/JS and Vue 3 + Vuetify. Use when writing or reviewing any UI component, page layout, form, modal, navigation, or interactive element.
+description: WCAG 2.1 AA rules for the Vue 3 + Vuetify client — semantics, Vuetify field labels, live announcements for shorten/copy, focus after shorten, keyboard on history actions, QR alt text, disabled explainers, reduced motion. Use before writing, and when reviewing, any template, form, dialog or interactive element.
 user-invocable: false
 ---
 
-## Semantic HTML
+> Sources: WCAG 2.1, WAI-ARIA Authoring Practices, Vuetify a11y docs. Contrast values come from `docs/design-system/shorten-link/MASTER.md` — it beats this skill. Read this **before** writing a template, not after; "existing views do it too" is no excuse.
 
-- Use native HTML elements before reaching for ARIA — `<button>` not `<div @click>`
-- Heading hierarchy must be logical and sequential: `h1` → `h2` → `h3`, never skip levels
-- One `<h1>` per page
-- Use landmark elements to define page regions
+## 1. Semantics
 
-```html
-<header>
-  <!-- site header, nav -->
-  <nav>
-    <!-- navigation -->
-    <main>
-      <!-- primary content, one per page -->
-      <aside>
-        <!-- supplementary content -->
-        <footer>
-          <!-- site footer -->
-          <section>
-            <!-- thematic grouping, needs a heading -->
-            <article><!-- self-contained content --></article>
-          </section>
-        </footer>
-      </aside>
-    </main>
-  </nav>
-</header>
-```
+- Native element or Vuetify component that renders one — never `<div @click>` / `<span @click>`.
+- Action → `v-btn` (renders `<button>`). Navigation → `v-btn :to`/`href` or `RouterLink` (renders `<a href>`). Never `@click="router.push(...)"`.
+- One `<h1>` per view, no skipped levels. `<main>` once in `App.vue`; `<header>`/`<nav>`/`<footer>` as landmarks.
+- `<section aria-labelledby="x">` paired with `<h2 id="x">` (result, history).
+- Lists of 2+ items (link history, recent codes) are `<ul>`/`<li>` or `v-list` — never stacked `<div>`s.
+- Wrapper components keep attrs on the real control: `inheritAttrs` stays true, or `inheritAttrs: false` + `v-bind="$attrs"` on the interactive element.
 
-- `<button>` for actions, `<a>` for navigation — never swap them. Vuetify's `<v-btn>` renders a `<button>` by default, or an `<a>` when given an `href`/`to` prop — pass `href`/`to` for navigation, not `@click="router.push(...)"` on a plain button-rendered `v-btn`.
-- `<a>` must have an `href` — `<a>` without `href` is not keyboard focusable
-- Use `<ul>` / `<ol>` for lists of 2+ items — never use `<div>` or `<span>` for list-like content
-- Use `<table>` only for tabular data, never for layout
+## 2. Forms (Vuetify fields)
 
----
+- Every `v-text-field`/`v-select`/`v-textarea` gets a `label` prop (i18n'd) — Vuetify wires it to a real `<label>`. `placeholder` is never the label.
+- Errors only via `:error-messages` — Vuetify sets `aria-invalid` + `aria-describedby`. No disconnected error `<span>`.
+- URL input: `type="url"`, `inputmode="url"`, `autocomplete="url"`, `spellcheck="false"`, `autocapitalize="off"`. Optional alias field says "optional" in its label or `hint`.
+- Submit with Enter: the field and `v-btn type="submit"` live in a `<form @submit.prevent>`.
+- Pending submit: `:loading="isPending"` on the `v-btn` (sets `aria-busy`); don't also disable the field silently.
 
-## ARIA
+## 3. Announcements — `useAnnounce`
 
-Use ARIA only when native HTML cannot achieve the same semantic meaning.
-
-### Required ARIA patterns
-
-```html
-<!-- Icon-only buttons must have a label -->
-<button aria-label="Close dialog">
-  <svg aria-hidden="true">...</svg>
-</button>
-
-<!-- Decorative images -->
-<img src="decoration.png" alt="" />
-
-<!-- Informative images -->
-<img src="chart.png" alt="Revenue increased 23% in Q4 2024" />
-
-<!-- Toggle state -->
-<button aria-pressed="true">Mute</button>
-<button aria-expanded="false" aria-controls="menu-id">Menu</button>
-
-<!-- Invalid form field -->
-<input aria-invalid="true" aria-describedby="email-error" />
-<span id="email-error" role="alert">Email format is invalid</span>
-
-<!-- Loading state -->
-<div aria-live="polite" aria-busy="true">Loading results...</div>
-
-<!-- Hidden from screen readers -->
-<span aria-hidden="true">★★★★☆</span>
-<span class="sr-only">4 out of 5 stars</span>
-```
-
-### ARIA rules
-
-- Never use `aria-label` on non-interactive elements unless they have a role
-- `aria-hidden="true"` removes element and all children from accessibility tree — never apply to focusable elements
-- `aria-describedby` for supplementary info, `aria-labelledby` for primary label
-- Dynamic content that updates without page reload must use `aria-live`
-
-| `aria-live` value | When to use                                        |
-| ------------------ | ---------------------------------------------------- |
-| `polite`           | Non-urgent updates — search results, form feedback   |
-| `assertive`        | Urgent updates — errors, critical alerts             |
-| `off`              | Updates user doesn't need to know about              |
-
----
-
-## Keyboard Navigation
-
-- All interactive elements must be reachable and operable via keyboard alone
-- Tab order must follow visual reading order (top-left to bottom-right)
-- Never use `tabindex` > 0 — it breaks natural tab order
-- `tabindex="0"` only when making a non-interactive element focusable (rare)
-- `tabindex="-1"` for programmatic focus only (e.g. focus trap in modal)
-
-### Keyboard interactions by component
-
-| Component          | Required keyboard behavior                               |
-| -------------------- | ------------------------------------------------------------ |
-| Button              | `Enter`, `Space` activates                                    |
-| Link                | `Enter` activates                                              |
-| Checkbox            | `Space` toggles                                                |
-| Radio group         | `Arrow` keys move between options                              |
-| Select / Dropdown   | `Arrow` keys navigate, `Enter` selects, `Escape` closes        |
-| Modal (`v-dialog`)  | `Escape` closes, focus trapped inside while open               |
-| Tab panel (`v-tabs`)| `Arrow` keys switch tabs                                       |
-| Tooltip (`v-tooltip`)| Appears on focus, dismissed with `Escape`                      |
-| Date picker         | `Arrow` keys navigate dates                                    |
-
-Vuetify's `v-dialog`, `v-menu`, `v-tabs`, `v-tooltip` implement most of this out of the box — verify, don't assume, especially for `v-dialog` focus-trap and `Escape`-to-close when custom `persistent`/`no-click-animation` props are set.
-
----
-
-## Focus Management
-
-- Visible focus indicator required on all interactive elements — never `outline: none` without a replacement
-- Focus indicator: minimum 3:1 contrast ratio against adjacent colors, minimum 2px outline
-
-```css
-/* Never */
-:focus {
-  outline: none;
-}
-
-/* Acceptable — custom focus style */
-:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-```
-
-- On modal open: move focus to first focusable element inside modal (Vuetify's `v-dialog` does this by default)
-- On modal close: return focus to the element that triggered the modal
-- On route change (Vue Router): move focus to `<main>` or the page heading
-- Focus trap in modals: Tab cycles through focusable elements inside, never escapes to background
-
-### Skip navigation
-
-Every page must have a skip link as the first focusable element:
-
-```html
-<a href="#main-content" class="sr-only focus:not-sr-only">
-  Skip to main content
-</a>
-<main id="main-content">...</main>
-```
-
----
-
-## Color & Contrast
-
-WCAG 2.1 AA minimum contrast ratios:
-
-| Text type                                | Ratio |
-| ------------------------------------------- | ----- |
-| Normal text (< 24px or < 18px bold)         | 4.5:1 |
-| Large text (≥ 24px or ≥ 18px bold)          | 3:1   |
-| UI components, icons, focus indicators      | 3:1   |
-
-- Never convey information by color alone — always pair with text, icon, or pattern
-- Error states: red color + error icon + error text (not red border alone)
-- Disabled elements are exempt from contrast requirements but must still look disabled
-
-```html
-<!-- Bad — color only -->
-<span style="color: red">Required</span>
-
-<!-- Good — color + text indicator -->
-<span style="color: red" aria-hidden="true">*</span>
-<span class="sr-only">Required</span>
-```
-
----
-
-## Forms
-
-- Every input must have a visible `<label>` — never use `placeholder` as a label substitute. Vuetify field components (`v-text-field`, `v-select`, `v-textarea`) render a proper associated `<label>` from their `label` prop — always pass `label`, never rely on `placeholder` alone.
-- `<label>` must be programmatically associated via `for`/`id` or wrapping (handled automatically by Vuetify field components when given `label`)
-
-```html
-<!-- Explicit association -->
-<label for="email">Email address</label>
-<input id="email" type="email" name="email" />
-```
-
-- Required fields: use `required` attribute + visual indicator (not asterisk alone)
-- Validation errors: bind to Vuetify's `:error-messages`/`:error` props (see `standard-vue/SKILL.md` VeeValidate example) — this wires `aria-invalid`/`aria-describedby` for you; do not build a parallel error `<span>` disconnected from the field
-- Error messages must appear inline, below the field — not at top of form only
-- Group related inputs with `<fieldset>` + `<legend>` (radio groups, checkboxes), or Vuetify's `v-radio-group`/`v-checkbox` with a `label` prop describing the group
-- `autocomplete` attribute required on common fields: `name`, `email`, `tel`, `new-password`, `current-password`, `street-address` — pass through as a native attr on Vuetify field components (they forward unrecognized attrs to the underlying `<input>`)
-
-```html
-<fieldset>
-  <legend>Notification preference</legend>
-  <label><input type="radio" name="notify" value="email" /> Email</label>
-  <label><input type="radio" name="notify" value="sms" /> SMS</label>
-</fieldset>
-```
-
----
-
-## Images & Media
-
-- All `<img>` must have `alt` attribute — empty string `alt=""` for decorative images
-- Alt text describes the purpose, not the appearance: "Bar chart showing 23% revenue increase" not "image of a chart"
-- SVG used as content: add `role="img"` + `<title>` inside SVG
-- SVG used as decoration: `aria-hidden="true"`
-- QR code images (this project generates them via `qrcode`) are informational, not decorative — `alt` must describe what scanning it does, e.g. `alt="QR code linking to the shortened URL"`, never `alt=""` or `alt="QR code"` alone
-- Video must have captions (auto-generated captions do not count as WCAG-compliant)
-- Audio must have transcript
-- Never use images of text — use real text with CSS styling
-
----
-
-## Motion & Animation
-
-- All animations must respect `prefers-reduced-motion`
-
-```css
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-```
-
-- Auto-playing animations that last more than 5 seconds must have pause/stop control
-- Never use flashing content with frequency 3Hz or more (seizure risk)
-
----
-
-## Vue 3 / Vuetify Specific
-
-### Component rules
-
-- Prefer native HTML elements or Vuetify components that render them correctly — `<v-btn>`/`<button>`, not `<div @click>`
-- Pass `aria-*`/`id`/`role` attributes through to the underlying DOM element in custom wrapper components. Vue 3 forwards non-prop attributes to the root element automatically (`inheritAttrs: true` by default) — verify this isn't disabled, and if a component has multiple root-level candidates, bind `v-bind="$attrs"` explicitly to the intended element:
-
-```vue
-<!-- ❌ inheritAttrs disabled with no explicit forwarding — aria-label is lost -->
-<script setup lang="ts">
-defineOptions({ inheritAttrs: false })
-</script>
-<template>
-  <div class="wrapper">
-    <button @click="$emit('click')"><slot /></button>
-  </div>
-</template>
-
-<!-- ✅ Explicitly forward attrs to the actual interactive element -->
-<script setup lang="ts">
-defineOptions({ inheritAttrs: false })
-</script>
-<template>
-  <div class="wrapper">
-    <button v-bind="$attrs" @click="$emit('click')"><slot /></button>
-  </div>
-</template>
-```
-
-### Dynamic content
-
-- Use `aria-live` regions for content that updates without navigation
-- Mount a single announcer region at the app root (e.g. in `App.vue`) and update it via a small composable rather than sprinkling ad hoc live regions per feature:
+Create once (`src/composables/useAnnounce.ts`) when the first case appears: a module-level `ref` rendered by a single region in `App.vue`. No ad-hoc live regions per feature.
 
 ```vue
 <!-- App.vue -->
-<template>
-  <div aria-live="polite" aria-atomic="true" class="sr-only" id="announcer">{{ announcement }}</div>
-  <RouterView />
-</template>
+<div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</div>
 ```
 
-```ts
-// src/composables/useAnnounce.ts
-import { ref } from 'vue'
+Mandatory announce (all text from `en` + `vi` locale keys, never hardcoded):
 
-const announcement = ref('')
+| Event | Message |
+| --- | --- |
+| Link shortened | short URL is ready (include the URL) |
+| Copy to clipboard success / failure | copied / copy failed |
+| QR downloaded | QR saved |
+| History item removed / history cleared | removed / cleared, with remaining count |
+| Shorten failed (network, rate-limit, invalid) | the error — `assertive` only for blocking errors |
+| Route change | new page title |
 
-export function useAnnounce() {
-  function announce(message: string) {
-    announcement.value = message
-  }
-  return { announcement, announce }
-}
-```
+`v-snackbar` alone is not enough — it is not reliably announced; pair it with `announce()` (or verify its `role="status"` reads with a screen reader).
 
-### Route changes (Vue Router)
+## 4. Focus
 
-- On every route change, move focus to `<main>` or the page `<h1>`
-- Announce the route change to screen readers via the shared live region
+- After shorten success: move focus to the result heading (`tabindex="-1"`) or the short-URL Copy button with `await nextTick()` — never leave focus on a button that just got re-rendered.
+- After removing a history item: focus the next item's action, else the previous, else the list heading. After clear-all: focus the shorten input.
+- Route change: `router.afterEach` focuses the view's `<h1>` (`tabindex="-1"`) and announces the title.
+- `v-dialog` (confirm clear history, QR enlarge): `aria-labelledby` → `v-card-title id`; focus returns to the trigger on close — verify, especially with `persistent`.
+- Visible focus on every control; never `outline: none` without a ≥3:1, ≥2px replacement. No `tabindex` > 0.
+- First focusable element: skip link `<a href="#main" class="sr-only focus:not-sr-only">` (i18n'd).
 
-```ts
-// src/router/index.ts
-router.afterEach((to) => {
-  const heading = document.querySelector('h1')
-  if (heading) {
-    heading.setAttribute('tabindex', '-1')
-    heading.focus()
-  }
-})
-```
+## 5. Keyboard — history list & actions
 
-### Modal / Dialog
+- Each history row's actions (copy, open, QR, remove) are real `v-btn`s reachable by Tab in reading order; no hover-only actions — anything revealed on hover also shows on `:focus-within`.
+- Icon-only `v-btn`: `aria-label` includes the target, e.g. `t('history.copyAria', { code })` → "Copy short link abc123", not just "Copy".
+- Open-original links: `target="_blank"` + `rel="noopener noreferrer"` + sr-only "(opens in new tab)".
+- `v-menu` overflow actions: Arrow keys move, Esc closes and returns focus to the trigger.
+- Destructive remove/clear needs confirm or undo (snackbar action reachable by keyboard before it times out — `timeout="-1"` or ≥ 6 s).
 
-- Vuetify's `v-dialog` sets `role="dialog"` and manages `aria-modal`/focus-trap by default — still pass an explicit `aria-labelledby` (or `v-card-title` with a matching `id`) so the dialog has an accessible name
-- Return focus to the trigger element on close — verify this holds when `v-dialog` is driven by a `v-model` bound to a ref set from multiple trigger points (each trigger's element reference must be tracked if you need to return focus to the *specific* trigger)
+## 6. Images, icons, color
 
-```vue
-<v-dialog v-model="isOpen" aria-labelledby="confirm-title">
-  <v-card>
-    <v-card-title id="confirm-title">Confirm deletion</v-card-title>
-    ...
-  </v-card>
-</v-dialog>
-```
+- QR `<img>`/`<canvas>`: `alt`/`aria-label` states the destination, e.g. "QR code for https://sho.rt/abc123" — never `alt=""` or just "QR code".
+- Decorative `v-icon` next to text → `aria-hidden="true"`; decorative emoji → `<span aria-hidden="true">`.
+- Never color alone: copy success = icon + text; errors = icon + text, not a red border.
+- Numbers need context for screen readers: `<span class="sr-only">{{ t('stats.clicks') }}: </span>{{ clicks }}`.
+- Contrast: 4.5:1 text, 3:1 large text / UI / focus ring.
 
----
+## 7. Disabled needs an explainer
 
-## Screen Reader Only Utility
+A grey control with no reason is a bug.
 
-Required in every project:
+- Shorten disabled because invalid → the field's inline `:error-messages` explains it; otherwise keep the button enabled and validate on submit.
+- Rate-limited → visible text or `v-tooltip` with the wait time.
+- Copy/QR before a link exists → hide, don't disable.
+- `v-tooltip` on a `disabled` `v-btn` never fires: wrap the button in a `<span tabindex="0" v-bind="props">`, or use `aria-disabled="true"` + guard the handler.
+- Before finishing a feature, grep `:disabled=` in its files and justify each.
 
-```css
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-```
+## 8. Motion
 
-Use `.sr-only` for: skip links (visible on focus), supplementary labels, status announcements, icon button labels.
-
----
-
-## DO NOT
-
-- Use `<div>` or `<span>` for interactive elements — use `<button>`/`<v-btn>` or `<a>`
-- Remove focus outline without providing a visible replacement
-- Use `tabindex` > 0
-- Use placeholder text as the only label for an input
-- Convey information with color alone
-- Apply `aria-hidden="true"` to focusable elements
-- Auto-play video or audio with sound
-- Use images of text
-- Skip heading levels (h1 → h3)
-- Use `<table>` for layout
-- Rely on auto-generated captions for video compliance
-- Use `aria-label` on non-interactive, non-landmark elements
-- Disable `inheritAttrs` without explicitly forwarding `v-bind="$attrs"` to the real interactive element
-
----
-
-## Code Review Checklist
-
-### Blocking
-
-- [ ] Interactive element not reachable by keyboard
-- [ ] `<input>`/Vuetify field missing associated `label`
-- [ ] `outline: none` with no replacement focus style
-- [ ] Color used as the only means to convey information
-- [ ] `aria-hidden="true"` on focusable element
-- [ ] Image (or generated QR code) missing meaningful `alt` attribute
-- [ ] Modal missing focus trap or accessible name (`aria-labelledby`)
-- [ ] `<div>` or `<span>` used for button/link behavior
-- [ ] Heading levels skipped
-- [ ] `inheritAttrs: false` set without forwarding `v-bind="$attrs"` to the intended element
-
-### Warning
-
-- [ ] Contrast ratio below 4.5:1 for normal text or 3:1 for large text / UI
-- [ ] `tabindex` > 0 used
-- [ ] Dynamic content update without `aria-live` region
-- [ ] Icon-only button (`v-btn icon`) missing `aria-label`
-- [ ] Form error not linked to field via `:error-messages`/`aria-describedby`
-- [ ] `aria-invalid` not set on invalid field
-- [ ] Animation missing `prefers-reduced-motion` handling
-- [ ] Route change missing focus management (Vue Router `afterEach`)
-- [ ] `autocomplete` missing on common form fields
-
-### Suggestion
-
-- [ ] `<section>` or `<article>` missing a heading
-- [ ] Radio/checkbox group missing `<fieldset>` + `<legend>` (or Vuetify group `label`)
-- [ ] Skip navigation link missing
-- [ ] SVG content missing `role="img"` + `<title>`
-- [ ] Custom wrapper component not forwarding `aria-*` props to the DOM element
-
----
-
-## A11y Baseline Patterns (MANDATORY on every UI build)
-
-`lint`/`type-check` pass ≠ a11y pass — no lint rule catches `aria-pressed`, `aria-current`, `scope`, `caption`, label association. Manual audit against the checklist below is **required** before finalizing a feature.
-
-Khi user hỏi "có a11y chưa" — câu trả lời mặc định nếu không proactive audit là **"chưa đủ"**. Pre-empt bằng cách audit ngay khi finalize feature, không chờ user hỏi.
-
-### Quick-fix table
-
-| Pattern                                                                                       | Rule                                                                                                                       |
-| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Decorative mdi icon (inside a button that already has text, gradient bg, rating row, dropdown chevron) | `aria-hidden="true"` on the `<v-icon>` (mdi doesn't auto-hide itself)                                                        |
-| Icon-only `v-btn`                                                                               | `aria-label="..."` mô tả action (không phải tên icon)                                                                        |
-| Toggle button (chip filter, view mode, favorite)                                                | `aria-pressed={isActive}`                                                                                                    |
-| Pagination current page                                                                         | `aria-current="page"`                                                                                                        |
-| Search `v-text-field`                                                                           | `label` prop set (Vuetify wires it to a real `<label>`) — KHÔNG dựa `placeholder` alone                                     |
-| `v-data-table` / raw `<table>`                                                                   | `<caption class="sr-only">` + `scope="col"` trên `<th>` nếu dùng raw `<table>`; `v-data-table` handles this internally — verify with a screen reader before trusting defaults |
-| Card click / clickable surface                                                                  | `<v-btn variant="text">` wrapping the card content, or `<div role="button" tabindex="0" @keydown.enter>` only as a last resort — prefer a real button |
-| Section landmark                                                                                 | `<section aria-labelledby="...">` link tới `<h2 id="...">` để region landmark có accessible name                            |
-| Toolbar wrapper (e.g. history filters)                                                          | `<nav aria-label="...">` HOẶC `role="toolbar" aria-label="..."`                                                              |
-| List of items (link history rows, recent codes)                                                 | `<ul>` + `<li>` cho list-like content — không `<div>` (SR không announce "list of N items")                                 |
-| Emoji decorative ("🔗", "✅")                                                                     | `<span aria-hidden="true">🔗</span>` (SR sẽ đọc tên emoji dài dòng nếu không hide)                                          |
-| Status conveyed by color + text (copy-success dot + label)                                      | Dot phải `aria-hidden="true"` (text đã đủ context, đọc dot là duplicate)                                                     |
-| Number-with-context (click count)                                                                | `<span class="sr-only">Clicks: </span>{{ clickCount }}` để SR đọc "Clicks: 12" thay vì đọc số trần                          |
-
-### Process
-
-- Khi build component mới, đọc `standard-accessibility/SKILL.md` **TRƯỚC** khi viết template, không phải sau.
-- "Pre-existing views cũng dùng pattern này" → **KHÔNG** phải excuse. Phải chủ động fix khi thêm code mới.
-- Focus của build phase thường là "match design" (visual + interaction) → semantic layer bị bỏ quên. Audit theo bảng trên trước khi merge.
-
----
-
-## Silent Disabled — Mọi disable phải kèm explainer
-
-Disable = **2 nửa**: gate hành động + giải thích lý do. Thiếu nửa thứ 2 = UX broken + vi phạm WCAG 3.3.1 (Error Identification), 3.3.3 (Error Suggestion), 4.1.2 (Name, Role, Value).
-
-User KHÔNG biết business rule ("URL không hợp lệ", "đã đạt giới hạn rate-limit", "form còn field invalid"). Mọi disable đều cần explainer trừ khi lý do hiển nhiên 100% từ visual liền kề.
-
-### Quick-fix table
-
-| Tình huống disable                                | Bắt buộc kèm theo                                                                                                                                       |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Submit button (Shorten) vì form invalid            | `<v-tooltip>` liệt kê field thiếu HOẶC inline `:error-messages` trên field — không cần tooltip riêng nếu lỗi đã hiện ngay trên field                    |
-| Button loading/pending (đang gọi API tạo link)     | `:loading="isPending"` trên `v-btn` (Vuetify tự thêm spinner + `aria-busy`) — không cần tooltip riêng cho loading                                       |
-| Button countdown (resend, retry)                    | Hiển thị countdown ngay trong button text (`Retry (30s)`) — explainer inline, không cần tooltip riêng                                                   |
-| Business rule (rate-limit đạt giới hạn)             | `<v-tooltip>` mô tả rule ("Bạn đã tạo quá nhiều link, thử lại sau X phút")                                                                              |
-| Copy button khi chưa có link                        | `<v-tooltip>` "Tạo link trước khi copy" HOẶC ẩn nút cho tới khi có kết quả (ẩn thường tốt hơn disable ở đây)                                            |
-
-### Pattern: `aria-disabled` thay vì `disabled` khi cần tooltip vẫn trigger được
-
-`disabled` HTML attribute (và Vuetify's `disabled` prop) remove element khỏi tab order → keyboard user không focus được → tooltip on-focus không trigger → mất explainer.
-
-Vuetify's `v-tooltip` wrapping a `disabled` `v-btn` has this exact problem — the disabled button doesn't fire pointer/focus events, so the tooltip never shows. Wrap in a focusable element instead:
-
-```vue
-<v-tooltip :disabled="isValid && !isSubmitting">
-  <template #activator="{ props: tooltipProps }">
-    <span v-bind="tooltipProps" tabindex="0">
-      <v-btn
-        type="submit"
-        :aria-disabled="!isValid || isSubmitting"
-        :loading="isSubmitting"
-        @click="
-          (e) => {
-            if (!isValid || isSubmitting) {
-              e.preventDefault()
-              return
-            }
-            handleSubmit()
-          }
-        "
-      >
-        Shorten
-      </v-btn>
-    </span>
-  </template>
-  <span>{{ !isValid ? 'Enter a valid URL first' : 'Submitting…' }}</span>
-</v-tooltip>
-```
-
-**Trade-off:** using `aria-disabled` instead of Vuetify's `disabled` prop means the click handler must self-guard (early return) — the button is still clickable at the DOM level.
-
-### Khi nào KHÔNG cần explainer (redundant)
-
-- Pagination "Previous" ở trang 1, "Next" ở trang cuối với page indicator hiển thị ngay cạnh
-- "Copy" button hidden entirely (not disabled) before a link exists — no explainer needed for something that isn't shown at all
-
-→ Quy tắc: **explainer = redundant** chỉ khi visual liền kề (≤ 1 element xa) đã chứa lý do. Còn lại đều phải có.
-
-### Pre-empt audit
-
-- Khi gõ `:disabled="..."` hoặc `:aria-disabled="..."` → dừng, hỏi "user nhìn thấy element xám này → có biết lý do không?". Không 100% rõ → wrap `v-tooltip` hoặc add helper text.
-- Khi finalize feature: grep `:disabled="|:aria-disabled="` toàn folder feature, list từng case + lý do, verify có explainer. Checklist ngang hàng với a11y audit.
+- Every custom transition/animation honours `prefers-reduced-motion` (`motion-reduce:` utilities or a media query); success/copy feedback must not rely on animation.
+- No auto-playing animation > 5 s without pause; nothing flashing ≥ 3 Hz.

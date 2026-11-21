@@ -2,6 +2,8 @@
 
 Khi yêu cầu mơ hồ ở điểm ảnh hưởng tới kết quả (scope, data model, API contract) thì hỏi lại; còn lại đọc rule/skill rồi làm.
 
+**File Sync Rule**: tạo mới hoặc xoá file/folder cấp module trong `src/` (vd `src/modules/<feature>/`, `src/prisma/`) → cập nhật lại phần mô tả tương ứng trong file này và skill liên quan trong cùng commit.
+
 NestJS REST API backend cho `web-app-shorten-link`. Tạo short link, redirect + đếm click, lưu trữ qua Prisma + PostgreSQL. Phase 1: **anonymous, không auth** (auth qua Ducker ID OIDC là Phase 2 — không tự dựng auth trước khi có yêu cầu).
 
 ## Tech Stack
@@ -24,13 +26,13 @@ Thư mục `.claude/skills/` chứa các file hướng dẫn coding convention.
 
 | Khi nào                                                             | Skill files cần đọc                             |
 | ---------------------------------------------------------------------- | -------------------------------------------------- |
-| Viết/review BẤT KỲ code (mọi ngôn ngữ) — nguyên tắc chung             | `standard-coding-universal/SKILL.md`              |
 | Viết/review `.ts` (type safety, tsconfig, decorator, async, imports) | `standard-typescript/SKILL.md` (bản Node/NestJS)  |
-| Đụng input user / rate-limit / redirect / config / secret            | `standard-security/SKILL.md` (bản BE)             |
 | Viết/review REST API endpoint, controller, request/response          | `standard-restful-api/SKILL.md`                   |
 | Scaffold/review module NestJS: controller, service, module, dto      | `module-struct/SKILL.md`                          |
 | Viết/review `schema.prisma`, query, migration, `PrismaService`        | `standard-prisma/SKILL.md`                        |
 | Thiết kế hệ thống backend, resilience, data integrity, architecture   | `standard-backend-engineering-mindset/SKILL.md`   |
+
+Skill dùng chung ở `<project>/.claude/skills/` (không nằm trong `server/.claude/skills/`): `standard-coding-universal` (mọi code) và `standard-security` (§1 + §2 — khi đụng input user / rate-limit / redirect / config / secret).
 
 **Không có** `standard-mongodb`/`standard-jwt` trong project này — stack không dùng MongoDB hay JWT tự dựng.
 

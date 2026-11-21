@@ -25,14 +25,21 @@ Thư mục `.claude/skills/` chứa các file hướng dẫn coding convention.
 
 | Khi nào                                                                    | Skill files cần đọc                    |
 | --------------------------------------------------------------------------- | --------------------------------------- |
-| Viết/review BẤT KỲ code (mọi ngôn ngữ) — nguyên tắc chung                    | `standard-coding-universal/SKILL.md`    |
 | Viết/review `.ts`/`.vue` (type safety, tsconfig, `<script setup lang="ts">`, defineProps/defineEmits, imports) | `standard-typescript/SKILL.md` (bản Vue) |
 | Viết/review Vue component, composable, Pinia store, Vue Router, Vue Query, VeeValidate+Zod form | `standard-vue/SKILL.md`                 |
 | Dùng Vuetify component (props, slots, theme) + phân chia việc với Tailwind utility, mdi icon | `standard-vuetify/SKILL.md`             |
 | Viết/review Tailwind utility classes, theme token, responsive, dark mode      | `standard-tailwind/SKILL.md` (bản v4)   |
 | Viết/review HTML/CSS accessibility, form, modal, navigation                   | `standard-accessibility/SKILL.md`       |
 
+Skill dùng chung ở `<project>/.claude/skills/` (không nằm trong `client/.claude/skills/`): `standard-coding-universal` (mọi code), `standard-security` (§1 + §3 — `v-html`, link ngoài, `localStorage`, biến `VITE_*`) và `design-bootstrap` (sinh design system, một lần cho cả project).
+
 Không có `standard-react`, `standard-nextjs`, `standard-shadcn`, `standard-seo` trong repo này — stack không dùng React/Next.js/shadcn.
+
+## Design system
+
+Nguồn token của toàn bộ UI (màu, font, radius, shadow, page pattern) là `docs/design-system/shorten-link/MASTER.md` — **chưa sinh**; chạy skill `design-bootstrap` trước UI feature đầu tiên. Token đi vào theme Vuetify (`src/plugins/vuetify.ts`, theme `light` + `dark`); Tailwind chỉ dùng cho layout/spacing/typography.
+
+**Thứ tự ưu tiên khi mâu thuẫn**: `MASTER.md` > file này > skill ở `.claude/skills/` > skill generic. Code và skill sửa theo MASTER.md, không sửa ngược; đổi MASTER.md chỉ qua một lần chạy lại `design-bootstrap` kèm ADR mới.
 
 ## Commands
 
@@ -99,4 +106,4 @@ pnpm type-check   # vue-tsc --build (errors must be fixed manually)
 - If `pnpm lint` or `pnpm type-check` report errors → fix ALL errors before responding to the user
 - Only after both pass with no errors can you hand over to the user
 - `pnpm lint` may auto-fix files — always re-read modified files after running it
-- Before finalizing UI work, self-audit against `standard-accessibility/SKILL.md` (a11y) and `standard-tailwind/SKILL.md` (no hardcoded palette colors bypassing tokens) — lint/type-check passing does not mean these are satisfied
+- Before finalizing UI work, self-audit against `standard-accessibility/SKILL.md` (a11y) and `docs/design-system/shorten-link/MASTER.md` (no hardcoded colors bypassing the Vuetify theme tokens) — lint/type-check passing does not mean these are satisfied
