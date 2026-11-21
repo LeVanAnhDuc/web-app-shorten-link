@@ -42,7 +42,7 @@ Chi tiết Phase 1 (functional scope BE/FE + E2E matrix): spec cũ đã xoá 202
 ## 4. Goals
 
 ### Goals — Phase 1
-- **G1 — Rút gọn**: `POST /api/links { url, customAlias? }` → sinh short code base62 (`nanoid`, mặc định ~7 ký tự) hoặc dùng `customAlias` nếu hợp lệ & chưa trùng. Validate URL (http/https, format). Trả `{ code, shortUrl }`.
+- **G1 — Rút gọn**: `POST /api/links { url, customAlias? }` → sinh short code 7 ký tự (base62 bỏ `0 O 1 l I`, `node:crypto`) hoặc dùng `customAlias` nếu hợp lệ & chưa trùng. Validate URL (http/https, format). Trả `{ code, shortUrl }`.
 - **G2 — Redirect**: `GET /:code` (BE đóng vai "short domain") → **302** về `originalUrl`; tăng `clickCount`; không thấy → 404.
 - **G3 — Click counter**: đếm **tổng** lượt click mỗi lần redirect (chưa breakdown geo/device — đó là P3).
 - **G4 — UI shorten**: trang chủ input URL → nút Shorten → hiện short URL + **Copy** + **QR code** (client-side).
@@ -89,7 +89,7 @@ Rõ ràng **KHÔNG** thuộc scope của Phase 1 (một số dời sang P2/P3 nh
 
 | Layer | Stack |
 |---|---|
-| **Backend** | NestJS + Prisma 6 + PostgreSQL, `@nestjs/throttler` (rate-limit), `nanoid` (sinh short code). Package manager `pnpm`, test `Jest`. Dev port **`:5300`**. DB name `shortenlink`. |
+| **Backend** | NestJS + Prisma 6 + PostgreSQL, `@nestjs/throttler` (rate-limit), `class-validator` (validate DTO); short code sinh bằng `node:crypto` `randomInt` — không dùng `nanoid` (v5 chỉ ESM, vướng Jest). Package manager `pnpm`, test `Jest`. Dev port **`:5300`**. DB name `shortenlink`. |
 | **Frontend** | Vue 3 + Vite + TypeScript, Vuetify 3 (component library) + Tailwind v4 (utility), Pinia (client state — local history), Vue Router, TanStack Vue Query (server state), VeeValidate + Zod (form + schema validation), `vue-i18n` (EN/VI), `axios` (HTTP), `qrcode` (QR client-side), Playwright (E2E). Package manager `pnpm`. Dev port **`:3300`**. |
 | **OAuth client (P2, chưa dùng ở P1)** | TBD khi vào spec P2 — client OIDC của `web-app-ducker-id` (IDMS), lib cụ thể quyết định lúc đó. |
 
@@ -107,7 +107,7 @@ Chi tiết version cụ thể: `server/package.json`, `client/package.json`.
 
 ## 9. Open Questions (defer — quyết định khi vào plan/spec tương ứng)
 
-1. **Độ dài + charset `nanoid`** (6 vs 7 vs 8 ký tự, base62 mặc định) → chốt ở P1 implementation plan (`writing-plans`).
+1. ~~**Độ dài + charset short code**~~ → **đã chốt ở F1** (`specs/shorten-link/design.md` DR-2): 7 ký tự, base62 bỏ `0 O 1 l I` (57 ký tự).
 2. **Redirect cache** (Redis vs chỉ dựa Postgres index) → **defer, P1 dùng Postgres index (đủ nhanh)**, Redis là tối ưu hoá dời sang P3 nếu cần.
 3. **Cơ chế OAuth client P2** với IDMS (`openid-client` vs `@nestjs/passport` strategy riêng) → quyết định ở spec P2.
 4. **Vuetify + Tailwind preflight conflict** (tắt Tailwind preflight vs scope theo class) → chốt lúc scaffold FE (Task bootstrap).
@@ -119,5 +119,6 @@ Chi tiết version cụ thể: `server/package.json`, `client/package.json`.
 
 | Date | Change |
 |---|---|
+| 2026-11-21 | F1: chốt short code 7 ký tự sinh bằng `node:crypto` (thay `nanoid`); Phase 1 chia 6 feature — `unfinished-features.md`. |
 | 2026-11-21 | Xoá design cũ (spec P1, mock Home, SuperDesign, design system Ember/Signal Teal) + `.claude/techstack/` — design lại bằng `ui-ux-pro-max`. |
 | 2026-07-24 | Initial — định vị `web-app-shorten-link`, roadmap P1–P3, goals/non-goals P1, tech stack, NFR. Port từ `_bootstrap/design.md` §1–§4. |

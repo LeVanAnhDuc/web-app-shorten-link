@@ -1,6 +1,6 @@
 # Shorten Link (web-app-shorten-link)
 
-Public, anonymous URL shortener — paste a long URL, get a short link plus a client-side QR code. Monorepo of `server/` (NestJS 11 + Prisma 6 + PostgreSQL, dev port `:5300`) and `client/` (Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4, dev port `:3300`); the repo is at **scaffold stage** — project goals and the ERD exist (the Phase 1 spec and UI design are being redone with the `ui-ux-pro-max` plugin), but no shortener code (no `Link` model, no `/api/links`, no redirect) is implemented yet.
+Public, anonymous URL shortener — paste a long URL, get a short link plus a client-side QR code. Monorepo of `server/` (NestJS 11 + Prisma 6 + PostgreSQL, dev port `:5300`) and `client/` (Vue 3 + Vite + TypeScript + Vuetify 3 + Tailwind v4, dev port `:3300`); Phase 1 is built in six vertical slices (`docs/unfinished-features.md`); **F1 is done**: `Link` model + migration, `POST /api/links`, and the home page that shortens a link onto a result ticket with Copy. Redirect (`GET /:code`) is F2. Server e2e tests (`pnpm test:e2e`) use the `shortenlink_test` database, created and migrated automatically; client Playwright E2E needs the server running on `:5300`.
 
 ## Commands
 

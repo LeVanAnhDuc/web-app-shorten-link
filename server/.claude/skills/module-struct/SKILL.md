@@ -7,19 +7,26 @@ user-invocable: false
 # Module layout
 
 ```
-src/modules/
-├── prisma/                       ← PrismaModule (@Global) + PrismaService — see standard-prisma
-└── links/
-    ├── dto/
-    │   ├── create-link.dto.ts
-    │   ├── link-response.dto.ts
-    │   └── index.ts              ← barrel (2+ files)
-    ├── links.module.ts
-    ├── links.controller.ts       ← @Controller('api/links')
-    ├── redirect.controller.ts    ← @Controller() — GET /:code, NOT under /api
-    ├── links.service.ts
-    └── links.service.spec.ts     ← unit test co-located
+src/
+├── app.setup.ts                  ← configureApp(): ValidationPipe + CORS, shared by main.ts and e2e
+├── config/app-config.ts          ← AppConfig provider (@Global AppConfigModule) + loadEnv()
+└── modules/
+    ├── prisma/                   ← PrismaModule (@Global) + PrismaService — see standard-prisma
+    └── links/
+        ├── dto/
+        │   ├── create-link.dto.ts
+        │   ├── link-response.dto.ts
+        │   └── index.ts          ← barrel (2+ files)
+        ├── code-generator.ts     ← generateCode(): 7 chars, base62 minus 0 O 1 l I
+        ├── url-rules.ts          ← isPublicHttpUrl (DR-4), pointsToHost (DR-5), MAX_URL_LENGTH
+        ├── links.module.ts
+        ├── links.controller.ts   ← @Controller('api/links')
+        ├── redirect.controller.ts← @Controller() — GET /:code, NOT under /api (F2)
+        ├── links.service.ts
+        └── *.spec.ts             ← unit tests co-located
 ```
+
+Pure rule modules (`code-generator.ts`, `url-rules.ts`) sit next to the service as plain functions — no class, no DI, unit-tested directly.
 
 - This flat shape is all P1 needs. **YAGNI**: no `services/`, `repositories/`, `guards/`, `strategies/`, `entities/`, `*.routes.ts` until a real second concern exists. Never create an empty folder "for later".
 - **No `entities/`** — `prisma/schema.prisma` is the model; import generated types (`import type { Link } from '@prisma/client'`). Never hand-write a duplicate entity class.
@@ -62,7 +69,7 @@ export class LinkResponseDto {
 }
 ```
 
-`ownerId` (reserved for P2) never appears in a response DTO. Base URL comes from config (`ConfigService`), never `process.env.X!`.
+`ownerId` (reserved for P2) never appears in a response DTO. Base URL comes from `AppConfig` (injected), never `process.env.X!`.
 
 ## Wiring
 
@@ -81,7 +88,7 @@ export class LinksModule {}
 ## Layer rules
 
 - **Controller**: bind DTO/params, call the service, return a response DTO (or redirect). No `PrismaService`, no business logic. A plain "not found" check (`if (!link) throw new NotFoundException('Link not found')`) may sit here.
-- **Service**: takes primitives/DTOs, returns DTOs or `null` — never `Request`/`Response`. Owns code generation (`nanoid`), alias handling, click counting, and Prisma error mapping (`P2002` → `ConflictException`, `P2025` → `null`/`NotFoundException`; rethrow anything else — never `.catch(() => null)` on all errors).
+- **Service**: takes primitives/DTOs, returns DTOs or `null` — never `Request`/`Response`. Owns code generation (`code-generator.ts`, `node:crypto`), alias handling, click counting, and Prisma error mapping (`P2002` → `ConflictException`, `P2025` → `null`/`NotFoundException`; rethrow anything else — never `.catch(() => null)` on all errors).
 - Alias conflict = DB `@unique` + catch `P2002`. Never pre-check with `findUnique` then `create` (race).
 
 ## Splitting a service
