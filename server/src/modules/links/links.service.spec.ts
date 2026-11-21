@@ -1,4 +1,7 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { Link } from '@prisma/client';
 import { AppConfig } from '../../config/app-config';
@@ -79,5 +82,12 @@ describe('LinksService.create', () => {
 
     await expect(service.create('https://example.com')).rejects.toBe(error);
     expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses a URL pointing back at the shortener without touching the DB', async () => {
+    await expect(
+      service.create('http://www.localhost:5300/x'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(create).not.toHaveBeenCalled();
   });
 });
