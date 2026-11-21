@@ -20,7 +20,7 @@
 - i18n key lấy đúng tên trong `docs/design-system/shorten-link/ux-copy.md`; mọi chuỗi có cả `en` và `vi`.
 - Màu chỉ qua theme Vuetify (tên MASTER.md); icon chỉ `mdi-*` theo `icon-map.md`; font Atkinson Hyperlegible Next (UI) + Martian Mono (chỉ mã/URL).
 - F1 không hiện chữ QR hay custom ending ở đâu trên trang (DR-12).
-- Playwright chỉ project `chromium` (DR-11). E2E dùng DB dev `shortenlink` (DR-9).
+- Playwright chỉ project `chromium` (DR-11) và chạy trên DB dev `shortenlink`. Supertest (`server/test/*.e2e-spec.ts`) chạy trên DB riêng `shortenlink_test` (skill `standard-prisma` §Testing; DR-9 đã sửa) — `test/setup-env.ts` đặt `DATABASE_URL` sang DB test, schema áp bằng `prisma migrate deploy`.
 - Theo `.claude/CLAUDE.md` §7: user yêu cầu review qua PR → commit không cần chờ duyệt từng lần.
 
 ## Review Focus
@@ -36,7 +36,7 @@
 ### Task 1 (BE): Config, Prisma model, PrismaModule
 
 **Files:**
-- Create: `server/src/config/app-config.ts`, `server/src/config/app-config.spec.ts`, `server/src/prisma/prisma.service.ts`, `server/src/prisma/prisma.module.ts`, `server/prisma/migrations/<ts>_init_link/migration.sql` (sinh tự động)
+- Create: `server/src/config/app-config.ts`, `server/src/config/app-config.spec.ts`, `server/src/modules/prisma/prisma.service.ts`, `server/src/modules/prisma/prisma.module.ts`, `server/prisma/migrations/<ts>_init_link/migration.sql` (sinh tự động)
 - Modify: `server/prisma/schema.prisma` (thêm model `Link` y hệt design §5), `server/src/app.module.ts`, `server/src/main.ts`, `server/.env.example`, `server/test/jest-e2e.json` (thêm `setupFiles`), Create `server/test/setup-env.ts`
 
 **Interfaces:**
@@ -53,7 +53,7 @@
 ### Task 2 (BE): Sinh mã và tạo link (`LinksService`)
 
 **Files:**
-- Create: `server/src/links/code-generator.ts`, `server/src/links/code-generator.spec.ts`, `server/src/links/links.service.ts`, `server/src/links/links.service.spec.ts`, `server/src/links/dto/link-response.dto.ts`
+- Create: `server/src/modules/links/code-generator.ts`, `server/src/modules/links/code-generator.spec.ts`, `server/src/modules/links/links.service.ts`, `server/src/modules/links/links.service.spec.ts`, `server/src/modules/links/dto/link-response.dto.ts`
 
 **Interfaces:**
 - Consumes: `PrismaService`, `AppConfig` (Task 1).
@@ -75,7 +75,7 @@
 ### Task 3 (BE): `POST /api/links` — DTO, validation, controller, CORS
 
 **Files:**
-- Create: `server/src/links/dto/create-link.dto.ts`, `server/src/links/validators/public-http-url.validator.ts`, `server/src/links/validators/public-http-url.validator.spec.ts`, `server/src/links/links.controller.ts`, `server/src/links/links.module.ts`, `server/test/links.e2e-spec.ts`
+- Create: `server/src/modules/links/dto/create-link.dto.ts`, `server/src/modules/links/validators/public-http-url.validator.ts`, `server/src/modules/links/validators/public-http-url.validator.spec.ts`, `server/src/modules/links/links.controller.ts`, `server/src/modules/links/links.module.ts`, `server/test/links.e2e-spec.ts`
 - Modify: `server/src/app.module.ts` (import `LinksModule`), `server/src/main.ts` (pipe + CORS — gom vào hàm `configureApp(app)` export từ `server/src/app.setup.ts` để e2e dùng chung)
 
 **Interfaces:**
@@ -86,7 +86,7 @@
 - Produces: `LinksController` `@Controller('api/links')`, `@Post()` `@HttpCode(201)` `@Header('Cache-Control', 'no-store')`.
 
 - [ ] **Step 1: Unit tests `isPublicHttpUrl`** (shortenerHost `sho.rt`): true cho `https://example.com`, `http://example.com/a?b=1`, `https://bücher.de/x`; false cho `example.com`, `ftp://x.com`, `javascript:alert(1)`, `data:text/html,x`, `http://localhost:8080`, `http://127.0.0.1`, `http://192.168.1.5`, `http://[::1]`, `https://sho.rt/x`, `https://www.sho.rt/x`, `https://SHO.RT:8443/x`, `https://notsho.rt/x` → **true** (không phải subdomain).
-- [ ] **Step 2: E2E `links.e2e-spec.ts`** (DB dev, `configureApp`): `201` + body khớp `LinkDto` + code regex + header `cache-control: no-store`; `"  https://example.com/x\n\t"` → 201, `originalUrl === 'https://example.com/x'`; 400 cho `{}`, `{ url: '' }`, `{ url: 'example.com' }`, `{ url: 'http://127.0.0.1' }`, `{ url: 'https://example.com', customAlias: 'x' }`; độ dài: `'https://example.com/' + 'a'.repeat(n)` với tổng 2048 → 201, 2049 → 400; override `AppConfig` (`publicBaseUrl: 'https://sho.rt'`) → `https://www.sho.rt/x` 400.
+- [ ] **Step 2: E2E `links.e2e-spec.ts`** (DB `shortenlink_test`, `configureApp`): `201` + body khớp `LinkDto` + code regex + header `cache-control: no-store`; `"  https://example.com/x\n\t"` → 201, `originalUrl === 'https://example.com/x'`; 400 cho `{}`, `{ url: '' }`, `{ url: 'example.com' }`, `{ url: 'http://127.0.0.1' }`, `{ url: 'https://example.com', customAlias: 'x' }`; độ dài: `'https://example.com/' + 'a'.repeat(n)` với tổng 2048 → 201, 2049 → 400; override `AppConfig` (`publicBaseUrl: 'https://sho.rt'`) → `https://www.sho.rt/x` 400.
 - [ ] **Step 3:** `pnpm test` và `pnpm test:e2e` → FAIL.
 - [ ] **Step 4:** Implement; `main.ts` gọi `configureApp`.
 - [ ] **Step 5:** `pnpm test` + `pnpm test:e2e` → PASS. `curl -X POST localhost:5300/api/links -H 'content-type: application/json' -d '{"url":"https://example.com"}'` → 201.
@@ -143,7 +143,7 @@
 ### Task 6 (FS): Tài liệu và đồng bộ
 
 **Files:**
-- Modify: `README.md` (`## Features` + bảng stack: thêm class-validator, bỏ "nanoid planned", thêm @fontsource; mục "Not built yet"), `docs/project-goals.md` §7 (`nanoid` → `node:crypto` + lý do) + changelog, `docs/design-system/shorten-link/ux-copy.md` (thêm `home.subtitleNoQr`), `docs/erd.md` (ghi model đã có migration), `server/.claude/CLAUDE.md` + `client/.claude/CLAUDE.md` (trạng thái "Phase 1 chưa build" → F1 đã có; cấu trúc `src/links`, `src/config`, `src/prisma`, `locales`, components mới), `CLAUDE.md` gốc (mô tả trạng thái), `docs/unfinished-features.md` (F1 🟡 giữ tới khi merge)
+- Modify: `README.md` (`## Features` + bảng stack: thêm class-validator, bỏ "nanoid planned", thêm @fontsource; mục "Not built yet"), `docs/project-goals.md` §7 (`nanoid` → `node:crypto` + lý do) + changelog, `docs/design-system/shorten-link/ux-copy.md` (thêm `home.subtitleNoQr`), `docs/erd.md` (ghi model đã có migration), `server/.claude/CLAUDE.md` + `client/.claude/CLAUDE.md` (trạng thái "Phase 1 chưa build" → F1 đã có; cấu trúc `src/modules/links`, `src/modules/prisma`, `src/config`, `locales`, components mới), `CLAUDE.md` gốc (mô tả trạng thái), `docs/unfinished-features.md` (F1 🟡 giữ tới khi merge)
 - Create: `docs/specs/shorten-link/e2e.md` (danh sách scenario đã tự động hoá + kết quả 2 gate), `docs/specs/shorten-link/security-report.md` (sau review bảo mật)
 
 - [ ] **Step 1:** Cập nhật tài liệu; grep không còn "no `Link` model" / "chưa build" sai sự thật.

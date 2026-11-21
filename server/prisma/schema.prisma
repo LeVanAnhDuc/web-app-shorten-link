@@ -12,3 +12,13 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Link {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  originalUrl String
+  customAlias String?
+  clickCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  ownerId     String? // reserved for P2 (Ducker ID owner) — always null in P1
+}

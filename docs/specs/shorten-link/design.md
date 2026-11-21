@@ -58,7 +58,7 @@ tiết nhỏ lên màn hình đã duyệt nên xem thẳng trên app — **quy�
 | DR-6 | Tạo lại cùng `originalUrl` → bản ghi + mã **mới** | P1 không dedupe; đơn giản, đúng `project-goals` |
 | DR-7 | Theme mặc định theo `prefers-color-scheme`; ngôn ngữ mặc định `en`; lựa chọn của user nhớ trong `localStorage` | Không có tài khoản để lưu tuỳ chọn |
 | DR-8 | Vé hiển thị link ngắn **không kèm** `http://`; Copy chép **đầy đủ** có protocol | Dễ đọc trên vé, nhưng link dán ra phải bấm được |
-| DR-9 | E2E (Playwright và supertest) chạy trên DB dev `shortenlink`, không dọn bản ghi sau test | Bản ghi ẩn danh, vô hại; không có endpoint xoá ở P1; tránh dựng DB test riêng cho một bảng. Xem §8 |
+| DR-9 | Playwright chạy trên app thật với DB dev `shortenlink`, không dọn bản ghi; supertest chạy trên DB riêng `shortenlink_test` | Bản ghi ẩn danh, vô hại, không có endpoint xoá ở P1. Supertest theo luật `standard-prisma` §Testing (không dùng DB dev) — *sửa lúc implement, trước đây ghi cả hai cùng dùng DB dev* |
 | DR-10 | Config đọc qua một provider nhỏ `AppConfig` (đọc `process.env` lúc khởi tạo, có mặc định dev) — **không** thêm `@nestjs/config` | Supertest override `PUBLIC_BASE_URL` bằng `overrideProvider(AppConfig)` thay vì sửa env toàn cục *(agent chốt sau builder check)* |
 | DR-12 | Copy trên trang chỉ hứa những gì đã chạy: F1 dùng subtitle **không** nhắc QR và chỉ hiện điểm `features.anonymous`; F3 thêm lại QR vào subtitle + `features.qr`, F5 thêm `features.alias` | User chọn (a) ngày 2026-11-21 — app luôn khớp feature đã xong. Mock giữ nguyên làm đích cuối của trang |
 | DR-11 | Playwright (gate A) chỉ chạy **Chromium** ở P1 | `clipboard-read` chỉ có ở Chromium; mở rộng trình duyệt khi có nhu cầu thật *(agent chốt sau builder check)* |
@@ -174,7 +174,7 @@ xoá `e2e/vue.spec.ts` mẫu.
 ## 7. Testing (BE)
 
 - Unit `LinksService`: sinh mã đúng độ dài + bảng chữ; retry khi `P2002` (mock Prisma) và dừng sau 3 lần; ghép `shortUrl` từ `PUBLIC_BASE_URL`.
-- E2E supertest `POST /api/links` (DB dev, DR-9): `201` + shape `LinkDto`; các lớp `400` ở matrix §8 nhóm 4 gồm IP literal (`http://127.0.0.1`, `http://[::1]`) và DR-5 (override `AppConfig` với `PUBLIC_BASE_URL=https://sho.rt`, gửi `https://sho.rt/x`, `https://www.sho.rt/x`, `https://SHO.RT:8443/x` → đều 400); field lạ → `400`.
+- E2E supertest `POST /api/links` (DB `shortenlink_test`, DR-9): `201` + shape `LinkDto`; các lớp `400` ở matrix §8 nhóm 4 gồm IP literal (`http://127.0.0.1`, `http://[::1]`) và DR-5 (override `AppConfig` với `PUBLIC_BASE_URL=https://sho.rt`, gửi `https://sho.rt/x`, `https://www.sho.rt/x`, `https://SHO.RT:8443/x` → đều 400); field lạ → `400`.
 - `app.e2e-spec.ts` có sẵn sẽ cần DB chạy khi `PrismaModule` kết nối lúc khởi động — chấp nhận, cập nhật nếu cần. `test:e2e` server chưa nằm trong green checks (methodology chỉ yêu cầu `pnpm test`); chạy nó ở bước verify của F1.
 
 ## 8. E2E Scenario Matrix
