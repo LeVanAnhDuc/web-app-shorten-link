@@ -1,6 +1,6 @@
 # Shorten Link — paste a long URL, get a short link and a QR code
 
-`web-app-shorten-link` is a public, anonymous URL shortener for anyone who needs a shareable short link without creating an account: paste a long URL, get a short link plus a QR code, and keep the links you created in a local (browser-side) history. Longer term it is planned as the first satellite app of the IDMS constellation (`web-app-store`), signing users in over OAuth/OIDC to unlock per-user link management.
+`web-app-shorten-link` is a public, anonymous URL shortener for anyone who needs a shareable short link without creating an account: paste a long URL, get a short link plus a QR code, and keep the links you created in a local (browser-side) history. Longer term it is planned as the first satellite app of the IDMS constellation (`web-app-ducker-id`), signing users in over OAuth/OIDC to unlock per-user link management.
 
 **Project stage: scaffold.** This repository currently contains the two runnable app skeletons, the wired-up library stack, and the design documents that specify Phase 1 — none of the shortener behaviour itself exists yet. Everything the product is supposed to do is listed under [Not built yet](#not-built-yet).
 
@@ -14,7 +14,7 @@
   - The full Phase 1 library stack is registered and verified to coexist: Vuetify 3 (MDI icon set), Tailwind v4 imported without its preflight layer so it does not fight Vuetify's reset, Pinia, Vue Router, TanStack Vue Query, and `vue-i18n` with `en`/`vi` message skeletons.
   - Pre-configured Axios client (`src/lib/axios.ts`) reading its base URL from `VITE_API_BASE_URL`.
 - **Design documentation as the source of truth (`docs/`)**
-  - `project-goals.md` (positioning, roadmap P1–P3, goals/non-goals), `erd.md` (the planned `Link` model), `specs/shorten-link-p1/design.md` (full Phase 1 API contract, validation rules and a 13-group E2E scenario matrix), plus the approved light+dark Home mock in `ui-designs/shorten-link-p1/home.html`.
+  - `project-goals.md` (positioning, roadmap P1–P3, goals/non-goals), and `erd.md` (the planned `Link` model). The Phase 1 spec and UI design are being redone: the old spec, Home mock and SuperDesign tokens were removed, and the new design system will live in `design-system/shorten-link/`.
 
 ### Not built yet
 
@@ -28,7 +28,7 @@ Everything below is **planned** in `docs/` and confirmed absent from the code. P
   - Rate limiting on link creation via `@nestjs/throttler`. Neither `@nestjs/throttler` nor `nanoid` is installed yet.
   - Home UI: URL + optional alias form (VeeValidate + Zod), result card with Copy and a client-side QR code (`qrcode`), anonymous local history in `localStorage` (copy / QR / open / remove, with click counts), a `/404` page, full EN+VI copy, and the accessibility behaviour described in the spec.
   - Jest unit/e2e tests for the endpoints and Playwright E2E covering the scenario matrix.
-- **Phase 2 (direction only)** — sign-in through IDMS (`web-app-store`) as an OAuth/OIDC client; links created while signed in get an `ownerId`; server-side "my links".
+- **Phase 2 (direction only)** — sign-in through IDMS (`web-app-ducker-id`) as an OAuth/OIDC client; links created while signed in get an `ownerId`; server-side "my links".
 - **Phase 3 (direction only)** — detailed analytics (geo / device / referrer), edit and delete links, expiration, password-protected links, custom domains, admin moderation.
 
 ## Tech Stack
@@ -38,7 +38,7 @@ Everything below is **planned** in `docs/` and confirmed absent from the code. P
 | Backend (`server/`) | NestJS 11, Prisma 6.19 + PostgreSQL (DB `shortenlink`), TypeScript 5.7, Jest 30 + supertest, ESLint + Prettier, `pnpm`, dev port `:5300` |
 | Frontend (`client/`) | Vue 3.5 + Vite 8 + TypeScript 6, Vuetify 3.12 (+ `@mdi/font`), Tailwind CSS v4 (utilities only, preflight off), Pinia, Vue Router 5, TanStack Vue Query 5, VeeValidate 4 + Zod 4, `vue-i18n` 11 (en/vi), Axios, `qrcode`, Playwright, oxlint + ESLint, `pnpm`, dev port `:3300` |
 | Planned, not installed | `@nestjs/throttler` (rate limiting), `nanoid` (short-code generation), `class-validator` (request DTO validation) |
-| Tooling / docs | Prisma CLI, SuperDesign (design system + approved HTML mocks under `docs/`) |
+| Tooling / docs | Prisma CLI, `ui-ux-pro-max` + `frontend-design` Claude Code plugins (design system under `docs/design-system/`) |
 
 Node.js: the client declares `^22.18.0 || >=24.12.0`.
 
@@ -107,10 +107,7 @@ web-app-shorten-link/
 ├── docs/                           # source-of-truth design documentation
 │   ├── project-goals.md            # positioning, personas, roadmap P1–P3, goals/non-goals
 │   ├── erd.md                      # planned PostgreSQL/Prisma schema (Link model)
-│   ├── adr/                        # architecture decision records (none recorded yet)
-│   ├── specs/shorten-link-p1/      # Phase 1 spec: API contract, validation, E2E matrix
-│   ├── ui-designs/shorten-link-p1/ # approved Home mock, light + dark (home.html)
-│   └── .superdesign/               # SuperDesign design system tokens for generated mocks
+│   └── adr/                        # architecture decision records (none recorded yet)
 ├── server/                         # NestJS 11 REST API (dev port 5300)
 │   ├── prisma/schema.prisma        # datasource + generator; no models yet, no migrations
 │   ├── src/                        # app.module / app.controller / app.service (scaffold Hello World)

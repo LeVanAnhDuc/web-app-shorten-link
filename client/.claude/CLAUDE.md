@@ -4,7 +4,7 @@ Vue 3 frontend cho `web-app-shorten-link`. Form rút gọn link, lịch sử, QR
 
 ## Tech Stack
 
-Chi tiết version/packages xem `../package.json`. Tóm tắt:
+Chi tiết version/packages xem `package.json` (của `client/`). Tóm tắt:
 
 - **Framework**: Vue 3 (Composition API + `<script setup>`) + Vite
 - **Language**: TypeScript

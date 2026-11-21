@@ -18,33 +18,24 @@ Folder `docs/` chứa tài liệu source-of-truth cho `web-app-shorten-link`, ch
   - ERD mới hơn code → là spec chưa implement → flag trong `writing-plans`.
 - Khi thiết kế/mở rộng data model (giai đoạn `brainstorming` / `writing-plans`) đọc ERD trước. Phát hiện thiếu field/bảng → đề xuất update ERD qua Decision Record (DR) trong design doc / plan.
 
-## 3. `ui-designs/` — Thiết kế UX (mock đã duyệt)
+## 3. `design-system/` + `ui-designs/` — Thiết kế UX
 
-- Mỗi feature FE mới sẽ có 1 folder con `ui-designs/<feature-name>/` chứa các file `.html` là mock **đã được user duyệt** (xuất ra từ workflow SuperDesign — xem mục 5) — đây là bản chốt cuối cùng để đối chiếu, KHÔNG phải bản nháp đang iterate.
-- File `.html` mock có thể đọc/xem trực tiếp bằng Read/browser — không mã hoá (khác Pencil `.pen` cũ, đã retired — dự án này không dùng Pencil).
-- Source-of-truth cho UI/UX của feature FE đã chốt. Khi code `client/src/**` đụng màn hình tương ứng → đối chiếu design ở đây trước.
-- Drift giữa design đã duyệt và code FE → flag trong `brainstorming` / `requesting-code-review`, không tự suy diễn layout.
-- Hiện tại (bootstrap) folder này còn trống — mock đầu tiên (Home: form + result + QR + history) sẽ được thêm ở task kế tiếp, trước khi build FE P1.
+- `design-system/shorten-link/` — design system dự án, sinh bởi plugin `ui-ux-pro-max` + `frontend-design`: token ở `MASTER.md`, override theo trang ở `pages/<page>.md`. **Chưa sinh** — design cũ (SuperDesign, brand Ember/Signal Teal, mock Home P1) đã xoá 2026-11-21 để design lại. Đọc `MASTER.md` trước khi tạo/duyệt bất kỳ mock nào; mock lệch token bị reject.
+- `ui-designs/<feature-name>/` — các file `.html` là mock **đã được user duyệt** (light + dark) — bản chốt để đối chiếu, KHÔNG phải bản nháp đang iterate. Hiện chưa có mock nào.
+- Khi code `client/src/**` đụng màn hình tương ứng → đối chiếu design ở đây trước. Drift giữa design đã duyệt và code FE → flag trong `brainstorming` / `requesting-code-review`, không tự suy diễn layout.
 
 ## 4. `specs/` — Tài liệu feature (per-feature)
 
 - `specs/<feature-name>/` chứa toàn bộ tài liệu 1 feature: `design.md` (brainstorm, gồm cả E2E Scenario Matrix — skill `e2e-scenario-coverage`) + `plan.md` + `security-report.md` (khi cần) + `e2e.md` (khi có E2E) + `e2e-bugs.md` (khi dual-gate fail).
 - Source-of-truth cho scope/flow từng feature; mọi feature mới tạo folder ở đây.
-- Feature đầu tiên: `specs/shorten-link-p1/` (Phase 1 — public anonymous shortener).
+- Hiện trống — spec Phase 1 cũ (`specs/shorten-link-p1/`) đã xoá 2026-11-21, sẽ viết lại qua `brainstorming` sau khi design lại.
 - Chi tiết lifecycle artifact xem root `.claude/CLAUDE.md` §1, §5, §6.2.
 
-## 5. `.superdesign/` — Design system + mock generation (thay thế Pencil)
+## 5. `.gitignore`
 
-- `design-system.md` — token brand STRICT (màu OKLCH, radius, shadow, icon set `mdi:`, typography, component recipe) mà mọi mock HTML do SuperDesign sinh ra **PHẢI** tuân theo. Đây là design tool duy nhất của dự án — **Pencil (`.pen`) đã retired, không dùng lại**.
-- `replica_html_template/` — các fragment HTML tái sử dụng (header, v.v.) để SuperDesign tái tạo layout hiện có một cách trung thực trước khi thêm mới. Hiện trống (chưa có UI thật để trích xuất — sẽ có sau khi FE P1 build xong 1 lần).
-- Quy trình: mock nháp sinh ra trong dự án SuperDesign riêng (không lưu trong `docs/`) → khi user duyệt bản cuối, xuất `.html` vào `docs/ui-designs/<feature-name>/` (mục 3) làm source-of-truth chốt.
-- Đọc `design-system.md` trước khi tạo/duyệt bất kỳ mock nào (skill `superdesign`) — mock lệch token (màu generic indigo/slate/sky, Google Font, `rounded-2xl` tràn lan...) bị reject.
+- `docs/.gitignore` chỉ ignore rác hệ điều hành/editor và `.worktrees/` (artifact của git worktree khi làm feature theo flow §6 root `.claude/CLAUDE.md`) — KHÔNG ignore bất kỳ nội dung tài liệu nào (`project-goals.md`, `erd.md`, `specs/`, `design-system/`, `ui-designs/`, `adr/` luôn được commit).
 
-## 6. `.gitignore`
-
-- Repo `docs/` chỉ ignore rác hệ điều hành/editor và `.worktrees/` (artifact của git worktree khi làm feature theo flow §6 root `.claude/CLAUDE.md`) — KHÔNG ignore bất kỳ nội dung tài liệu nào (`project-goals.md`, `erd.md`, `specs/`, `ui-designs/`, `.superdesign/`, `adr/` luôn được commit).
-
-## 7. `adr/` — Architecture Decision Records
+## 6. `adr/` — Architecture Decision Records
 
 - Quyết định kiến trúc tầm dự án (không riêng 1 feature) — xem `adr/README.md` cho quy ước đặt tên và khi nào cần tạo ADR mới.
 - Quyết định cục bộ trong 1 feature ghi ở bảng "Decision Records" (`DR-n`) trong `specs/<feature-name>/design.md` — không cần ADR riêng.
