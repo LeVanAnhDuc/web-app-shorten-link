@@ -25,6 +25,6 @@ const isDark = computed(() => theme.global.current.value.dark)
     <main id="main" tabindex="-1" class="mx-auto w-full max-w-[720px] px-4 pb-16 pt-6">
       <RouterView />
     </main>
-    <div class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</div>
+    <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</div>
   </v-app>
 </template>

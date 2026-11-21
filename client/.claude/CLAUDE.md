@@ -12,7 +12,7 @@ Chi tiết version/packages xem `package.json` (của `client/`). Tóm tắt:
 - **Utility CSS**: Tailwind CSS v4 (`@tailwindcss/vite`, preflight **OFF** — xem `src/assets/tailwind.css`)
 - **State**: Pinia (global/client state) + TanStack Vue Query (server state)
 - **Routing**: Vue Router
-- **Forms**: VeeValidate + Zod
+- **Forms**: VeeValidate + Zod 4 — qua adapter `src/schemas/to-form-schema.ts` (`@vee-validate/zod` 4.15 chỉ hỗ trợ Zod 3, không dùng `toTypedSchema`)
 - **i18n**: vue-i18n (`en` / `vi`)
 - **HTTP**: Axios (`src/lib/axios.ts` → `apiClient`)
 - **Misc**: `qrcode` (QR generation), `@mdi/font` (icon set cho Vuetify)
@@ -71,7 +71,7 @@ Order matters only where a plugin depends on another at setup time — keep new 
 
 **Vuetify + Tailwind division of labor:** Vuetify owns all component styling (`v-btn`, `v-text-field`, `v-card`, …); Tailwind — imported **without preflight** so it never fights Vuetify's reset — owns layout/spacing/typography around them. Icons: `@mdi/font` only. Full rules: `standard-vuetify/SKILL.md`.
 
-**i18n:** `vue-i18n` in Composition API mode (`legacy: false`). Messages defined per-locale in `src/plugins/i18n.ts` (`en`, `vi`, default `en`). Use `useI18n()` in `<script setup>`, `$t(...)` in templates — never hardcode user-facing strings.
+**i18n:** `vue-i18n` in Composition API mode (`legacy: false`). Messages live in `src/locales/en.json` + `vi.json` (keys from `docs/design-system/shorten-link/ux-copy.md`), loaded by `src/plugins/i18n.ts` (default `en`). Theme + locale choice: `usePreferences()` (called once in `App.vue`, remembered in `localStorage` with a guarded fallback). Screen-reader announcements: one live region in `App.vue`, fed by `useAnnounce()`. Use `useI18n()` in `<script setup>`, `$t(...)` in templates — never hardcode user-facing strings.
 
 **Server state:** TanStack Vue Query (`src/plugins/vue-query.ts`) — `refetchOnWindowFocus: false`, `retry: 1` by default. Use `useQuery`/`useMutation` for all BE calls (link creation, history, click count) — never call `apiClient` directly inside a component without wrapping in Vue Query.
 
@@ -84,8 +84,12 @@ Order matters only where a plugin depends on another at setup time — keep new 
 - `src/plugins/` — app-level plugin setup/config (`vuetify.ts`, `i18n.ts`, `vue-query.ts`) — registered once in `src/main.ts`
 - `src/lib/` — library wrappers (`axios.ts` → `apiClient`)
 - `src/router/` — Vue Router instance + route table
-- `src/assets/` — static assets + global CSS (`main.css`, `tailwind.css`)
-- `src/types/` (create when first shared type is needed) — shared TS types/interfaces used across ≥2 files; component-local prop/emit types stay inline via `defineProps`/`defineEmits` generics
+- `src/assets/` — global CSS: `tailwind.css` (theme + utilities, no preflight), `app.css` (font variables, `.font-code`, focus ring)
+- `src/locales/` — `en.json`, `vi.json`
+- `src/schemas/` — Zod schemas (`link.ts`: URL rules mirroring the server's DR-4) + the VeeValidate adapter
+- `src/types/` — shared TS types used across ≥2 files (`LinkDto`), re-exported from `index.ts`; component-local prop/emit types stay inline via `defineProps`/`defineEmits` generics
+
+Current screen (F1): `App.vue` (skip link, `AppHeader`, `<main>`, live region) → `HomeView` → `ShortenForm` (emits `created`) + `LinkTicket` (the tear-off stub, Copy). E2E specs: `e2e/shorten-link/*.spec.ts` — need the server on `:5300` running.
 
 ## Quality & Workflow
 
