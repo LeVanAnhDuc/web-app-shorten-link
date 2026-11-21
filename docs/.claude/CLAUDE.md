@@ -20,7 +20,7 @@ Folder `docs/` chứa tài liệu source-of-truth cho `web-app-shorten-link`, ch
 
 ## 3. `design-system/` + `ui-designs/` — Thiết kế UX
 
-- `design-system/shorten-link/` — design system dự án, sinh bởi plugin `ui-ux-pro-max` + `frontend-design`: token ở `MASTER.md`, override theo trang ở `pages/<page>.md`. **Chưa sinh** — design cũ (SuperDesign, brand Ember/Signal Teal, mock Home P1) đã xoá 2026-11-21 để design lại. Đọc `MASTER.md` trước khi tạo/duyệt bất kỳ mock nào; mock lệch token bị reject.
+- `design-system/shorten-link/` — design system dự án, sinh bởi plugin `ui-ux-pro-max` + `frontend-design`: token ở `MASTER.md`, icon ở `icon-map.md`, câu chữ EN/VI ở `ux-copy.md`, override theo trang ở `pages/<page>.md` (khi có). Sinh ngày 2026-11-21 (concept "claim ticket" — quyết định ở `adr/0001-design-system-bootstrap.md`). Đọc `MASTER.md` trước khi tạo/duyệt bất kỳ mock nào; mock lệch token bị reject.
 - `ui-designs/<feature-name>/` — các file `.html` là mock **đã được user duyệt** (light + dark) — bản chốt để đối chiếu, KHÔNG phải bản nháp đang iterate. Hiện chưa có mock nào.
 - Khi code `client/src/**` đụng màn hình tương ứng → đối chiếu design ở đây trước. Drift giữa design đã duyệt và code FE → flag trong `brainstorming` / `requesting-code-review`, không tự suy diễn layout.
 

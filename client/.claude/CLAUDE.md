@@ -37,7 +37,7 @@ Không có `standard-react`, `standard-nextjs`, `standard-shadcn`, `standard-seo
 
 ## Design system
 
-Nguồn token của toàn bộ UI (màu, font, radius, shadow, page pattern) là `docs/design-system/shorten-link/MASTER.md` — **chưa sinh**; chạy skill `design-bootstrap` trước UI feature đầu tiên. Token đi vào theme Vuetify (`src/plugins/vuetify.ts`, theme `light` + `dark`); Tailwind chỉ dùng cho layout/spacing/typography.
+Nguồn token của toàn bộ UI (màu, font, radius, shadow, page pattern) là `docs/design-system/shorten-link/MASTER.md` (icon: `icon-map.md`, copy EN/VI: `ux-copy.md` cùng thư mục) — quyết định ở `docs/adr/0001-design-system-bootstrap.md`. Font: Atkinson Hyperlegible Next (UI) + Martian Mono (chỉ cho code/URL), tự host qua `@fontsource/*`. Token đi vào theme Vuetify (`src/plugins/vuetify.ts`, theme `light` + `dark`); Tailwind chỉ dùng cho layout/spacing/typography.
 
 **Thứ tự ưu tiên khi mâu thuẫn**: `MASTER.md` > file này > skill ở `.claude/skills/` > skill generic. Code và skill sửa theo MASTER.md, không sửa ngược; đổi MASTER.md chỉ qua một lần chạy lại `design-bootstrap` kèm ADR mới.
 
