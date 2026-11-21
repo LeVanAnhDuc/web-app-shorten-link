@@ -27,8 +27,7 @@ Thư mục `.claude/skills/` chứa các file hướng dẫn coding convention.
 | --------------------------------------------------------------------------- | --------------------------------------- |
 | Viết/review `.ts`/`.vue` (type safety, tsconfig, `<script setup lang="ts">`, defineProps/defineEmits, imports) | `standard-typescript/SKILL.md` (bản Vue) |
 | Viết/review Vue component, composable, Pinia store, Vue Router, Vue Query, VeeValidate+Zod form | `standard-vue/SKILL.md`                 |
-| Dùng Vuetify component (props, slots, theme) + phân chia việc với Tailwind utility, mdi icon | `standard-vuetify/SKILL.md`             |
-| Viết/review Tailwind utility classes, theme token, responsive, dark mode      | `standard-tailwind/SKILL.md` (bản v4)   |
+| Vuetify component (props, theme, form field, feedback), mdi icon, Tailwind class / `tailwind.css`, responsive, dark mode | `standard-vuetify/SKILL.md` |
 | Viết/review HTML/CSS accessibility, form, modal, navigation                   | `standard-accessibility/SKILL.md`       |
 
 Skill dùng chung ở `<project>/.claude/skills/` (không nằm trong `client/.claude/skills/`): `standard-coding-universal` (mọi code), `standard-security` (§1 + §3 — `v-html`, link ngoài, `localStorage`, biến `VITE_*`) và `design-bootstrap` (sinh design system, một lần cho cả project).
@@ -70,12 +69,7 @@ Order matters only where a plugin depends on another at setup time — keep new 
 
 **API client:** All HTTP calls go through `apiClient` (`src/lib/axios.ts`), configured with `baseURL: import.meta.env.VITE_API_BASE_URL`. Never hardcode the backend URL or call `axios` directly in components/composables.
 
-**Vuetify + Tailwind division of labor** (see `src/assets/tailwind.css` for full rationale):
-
-- Tailwind is imported **without preflight** (`@import 'tailwindcss/theme.css'; @import 'tailwindcss/utilities.css';` — no `@import 'tailwindcss/preflight.css'`) so it never fights Vuetify's own base/reset styles.
-- **Vuetify owns all component styling** — buttons, inputs, cards, dialogs, forms use Vuetify components (`v-btn`, `v-text-field`, `v-card`, …), never raw styled HTML replicas.
-- **Tailwind owns layout/spacing/typography utilities** around and between Vuetify components — `flex`, `gap-4`, `p-6`, `text-sm`, grid layouts, responsive breakpoints.
-- Icons: `@mdi/font` registered as Vuetify's default icon set (`mdi:` aliases) — use `<v-icon icon="mdi-content-copy" />` or Vuetify component `prepend-icon`/`append-icon` props, not a second icon library.
+**Vuetify + Tailwind division of labor:** Vuetify owns all component styling (`v-btn`, `v-text-field`, `v-card`, …); Tailwind — imported **without preflight** so it never fights Vuetify's reset — owns layout/spacing/typography around them. Icons: `@mdi/font` only. Full rules: `standard-vuetify/SKILL.md`.
 
 **i18n:** `vue-i18n` in Composition API mode (`legacy: false`). Messages defined per-locale in `src/plugins/i18n.ts` (`en`, `vi`, default `en`). Use `useI18n()` in `<script setup>`, `$t(...)` in templates — never hardcode user-facing strings.
 
