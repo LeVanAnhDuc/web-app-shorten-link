@@ -14,6 +14,12 @@ describe('AppConfig.fromEnv', () => {
     expect(config.publicBaseUrl).toBe('https://sho.rt');
   });
 
+  it('fails at startup on an invalid PUBLIC_BASE_URL', () => {
+    expect(() => AppConfig.fromEnv({ PUBLIC_BASE_URL: 'not a url' })).toThrow(
+      /PUBLIC_BASE_URL/,
+    );
+  });
+
   it('exposes the hostname of the public base URL', () => {
     const config = AppConfig.fromEnv({
       PUBLIC_BASE_URL: 'https://Sho.RT:8443',

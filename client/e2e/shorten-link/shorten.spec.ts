@@ -82,10 +82,19 @@ test.describe('validation', () => {
 
     await expect(fieldMessage(page)).toContainText('Paste a link to shorten.')
     await expect(urlInput(page)).toHaveAttribute('aria-invalid', 'true')
+    await expect(urlInput(page)).toBeFocused()
     expect(posts()).toBe(0)
   })
 
-  for (const bad of ['example.com', 'ftp://x.com', 'http://localhost:8080', 'http://127.0.0.1']) {
+  for (const bad of [
+    'example.com',
+    'ftp://x.com',
+    'http://localhost:8080',
+    'http://127.0.0.1',
+    'http://a..com',
+    'http://-.com',
+    'https://google.com@evil.tk',
+  ]) {
     test(`rejects ${bad} on the client`, async ({ page }) => {
       const posts = countPosts(page)
       await shorten(page, bad)
@@ -106,6 +115,7 @@ test.describe('validation', () => {
     await shorten(page, 'https://example.com/server-says-no')
 
     await expect(fieldMessage(page)).toContainText("That doesn't look like a web link.")
+    await expect(urlInput(page)).toBeFocused()
     await expect(snackbar(page)).toHaveCount(0)
   })
 })
@@ -136,6 +146,7 @@ test.describe('errors and loading', () => {
     await page.route(API, (route) => route.fulfill({ status: 500, body: '{}' }))
     await shorten(page, 'https://example.com/boom')
     await expect(snackbar(page)).toContainText("Couldn't reach the server.")
+    await expect(urlInput(page)).toHaveValue('https://example.com/boom')
   })
 
   test('the button shows a loading state while waiting', async ({ page }) => {
@@ -146,6 +157,7 @@ test.describe('errors and loading', () => {
     await urlInput(page).fill('https://example.com/slow')
     await shortenButton(page).click()
 
+    // Stays focusable while loading (not disabled); a second click is ignored — see 'double-click'.
     await expect(page.locator('form .v-btn--loading')).toBeVisible()
     await expect(result(page)).toBeVisible({ timeout: 5000 })
   })
@@ -193,6 +205,44 @@ test.describe('accessibility', () => {
   })
 })
 
+test.describe('keyboard', () => {
+  test('tab order: skip link, header, field, Shorten, then Copy', async ({ page }) => {
+    await shorten(page, 'https://example.com/tab-order')
+    await expect(result(page)).toBeFocused()
+
+    // Start from the first focusable element of the page.
+    await page.getByRole('link', { name: 'Skip to main content' }).focus()
+    const focusedName = () =>
+      page.evaluate(() => {
+        const el = document.activeElement as HTMLElement | null
+        if (!el) return ''
+        if (el instanceof HTMLInputElement) return `input:${el.labels?.[0]?.textContent?.trim() ?? ''}`
+        return el.getAttribute('aria-label') ?? el.textContent?.trim() ?? el.tagName
+      })
+    const order = [await focusedName()]
+    for (let i = 0; i < 5; i++) {
+      await page.keyboard.press('Tab')
+      order.push(await focusedName())
+    }
+
+    expect(order[0]).toBe('Skip to main content')
+    expect(order[1]).toContain('Tiếng Việt')
+    expect(order[2]).toMatch(/Switch to (dark|light) theme/)
+    expect(order[3]).toBe('input:Long link')
+    expect(order[4]).toContain('Shorten')
+    expect(order[5]).toMatch(/^Copy short link [2-9A-HJ-NP-Za-km-z]{7}$/)
+  })
+
+  test('a repeated network error shows the snackbar again', async ({ page }) => {
+    await page.route(API, (route) => route.abort())
+    await shorten(page, 'https://example.com/offline-1')
+    await expect(snackbar(page)).toContainText("Couldn't reach the server.")
+    await shorten(page, 'https://example.com/offline-2')
+    await expect(snackbar(page)).toContainText("Couldn't reach the server.")
+    await expect(page.locator('#announcer')).toContainText("Couldn't reach the server.")
+  })
+})
+
 test.describe('copy', () => {
   test('copies the full short URL', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])
@@ -230,6 +280,19 @@ test.describe('i18n and rendering', () => {
     await page.getByRole('button', { name: 'Rút gọn' }).click()
     await expect(page.getByRole('region', { name: 'Link ngắn của bạn' })).toBeVisible()
     await expect(page.getByRole('button', { name: /Sao chép link ngắn/ })).toContainText('Sao chép')
+  })
+
+  test('switching language while an error is shown translates the error', async ({ page }) => {
+    await shortenButton(page).click()
+    await expect(fieldMessage(page)).toContainText('Paste a link to shorten.')
+    await page.getByRole('button', { name: 'Tiếng Việt' }).click()
+    await expect(fieldMessage(page)).toContainText('Hãy dán link cần rút gọn.')
+  })
+
+  test('the full original URL is available on hover', async ({ page }) => {
+    const long = urlOfLength(600)
+    await shorten(page, long)
+    await expect(result(page).getByTestId('ticket-original')).toHaveAttribute('title', long)
   })
 
   test('a long original URL does not overflow on a phone', async ({ page }) => {

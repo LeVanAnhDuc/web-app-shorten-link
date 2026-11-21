@@ -108,8 +108,12 @@ describe('POST /api/links (e2e)', () => {
     ['IPv6 literal', { url: 'http://[::1]' }],
     ['non-string url', { url: 42 }],
     ['unknown field', { url: 'https://example.com', customAlias: 'x' }],
+    ['malformed host', { url: 'http://a..com' }],
+    ['credentials in URL', { url: 'https://google.com@evil.tk' }],
+    ['line break inside', { url: 'https://exa\nmple.com/a' }],
   ])('rejects %s with 400', async (_case, body) => {
     const res = await post(body).expect(400);
+    expect(res.headers['cache-control']).toBe('no-store');
     expect(bodyOf<ErrorBody>(res).statusCode).toBe(400);
     expect(Array.isArray(bodyOf<ErrorBody>(res).message)).toBe(true);
   });

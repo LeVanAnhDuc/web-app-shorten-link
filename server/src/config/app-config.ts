@@ -28,6 +28,10 @@ export class AppConfig {
     const publicBaseUrl = (
       env.PUBLIC_BASE_URL ?? DEFAULT_PUBLIC_BASE_URL
     ).replace(/\/+$/, '');
+    // Fail at startup rather than on the first request (publicHostname parses it).
+    if (!URL.canParse(publicBaseUrl)) {
+      throw new Error(`PUBLIC_BASE_URL is not a valid URL: "${publicBaseUrl}"`);
+    }
     return new AppConfig(
       publicBaseUrl,
       env.CLIENT_ORIGIN ?? DEFAULT_CLIENT_ORIGIN,

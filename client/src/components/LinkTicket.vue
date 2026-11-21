@@ -46,7 +46,9 @@ onBeforeUnmount(() => clearTimeout(resetTimer))
         <v-icon icon="mdi-link" size="16" aria-hidden="true" />
         {{ t('result.original') }}
       </p>
-      <p data-testid="ticket-original" class="ticket__long-url font-code">{{ link.originalUrl }}</p>
+      <p data-testid="ticket-original" class="ticket__long-url font-code" :title="link.originalUrl">
+        {{ link.originalUrl }}
+      </p>
     </div>
 
     <div class="ticket__perforation" aria-hidden="true" />

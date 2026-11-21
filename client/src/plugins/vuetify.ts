@@ -55,7 +55,8 @@ export const vuetify = createVuetify({
   defaults: {
     VBtn: { variant: 'flat', rounded: 'md', class: 'text-none' },
     VCard: { variant: 'flat', rounded: 'lg' },
-    VTextField: { variant: 'outlined', density: 'comfortable', rounded: 'md' },
+    // color: focused outline in primary (MASTER.md focus = primary), not the default on-surface.
+    VTextField: { variant: 'outlined', density: 'comfortable', rounded: 'md', color: 'primary' },
     VSnackbar: { location: 'bottom', rounded: 'lg' },
   },
 })

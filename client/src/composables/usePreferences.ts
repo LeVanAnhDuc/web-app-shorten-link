@@ -43,8 +43,7 @@ export function usePreferences() {
   const { locale } = useI18n()
 
   const storedTheme = readStored(THEME_KEY)
-  theme.global.name.value =
-    storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : systemTheme()
+  theme.change(storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : systemTheme())
 
   const storedLocale = readStored(LOCALE_KEY)
   locale.value = isLocale(storedLocale) ? storedLocale : DEFAULT_LOCALE
@@ -59,7 +58,7 @@ export function usePreferences() {
 
   function toggleTheme(): void {
     const next: ThemeName = theme.global.current.value.dark ? 'light' : 'dark'
-    theme.global.name.value = next
+    theme.change(next)
     writeStored(THEME_KEY, next)
   }
 

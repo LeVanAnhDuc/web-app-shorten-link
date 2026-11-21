@@ -27,6 +27,17 @@ describe('isPublicHttpUrl (DR-4)', () => {
     'http://[::1]',
     'https://exa mple.com',
     'https://example.123',
+    'http://.com',
+    'http://a..com',
+    'http://-.com',
+    'http://a-.example.com',
+    'https://google.com@evil.tk',
+    'https://user:pass@example.com',
+    'https://exa\nmple.com/a',
+    'https://example.com/a\tb',
+    'https://example.com/\r\nSet-Cookie:x',
+    'https://example.com/a b',
+    'https://example.com/\u0000',
   ])('rejects %s', (url) => {
     expect(isPublicHttpUrl(url)).toBe(false);
   });

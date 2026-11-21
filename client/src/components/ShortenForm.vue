@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
+import type { VTextField } from 'vuetify/components'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { isAxiosError } from 'axios'
@@ -23,6 +24,7 @@ const { defineField, errors, handleSubmit, setFieldError } = useForm({
 const [url, urlAttrs] = defineField('url', { validateOnModelUpdate: false })
 
 const networkError = ref(false)
+const urlField = ref<InstanceType<typeof VTextField> | null>(null)
 /** Set synchronously so a second click cannot slip in during async validation. */
 let inFlight = false
 
@@ -30,21 +32,38 @@ function clearUrlError(): void {
   if (errors.value.url) setFieldError('url', undefined)
 }
 
-const submitValid = handleSubmit(async (values) => {
-  try {
-    const link = await mutateAsync(values.url)
-    emit('created', link)
-  } catch (error) {
-    // Any 400 means the server refused the URL (e.g. it points at the shortener, DR-5).
-    if (isAxiosError(error) && error.response?.status === 400) {
-      setFieldError('url', 'error.url.invalid')
-      void announce(t('error.url.invalid'))
-    } else {
-      networkError.value = true
-      void announce(t('error.network'))
+/** Send keyboard and screen-reader users to the field that holds the error. */
+function focusUrlField(): void {
+  urlField.value?.focus()
+}
+
+/** Re-open the snackbar even if it is still showing from a previous failure. */
+async function showNetworkError(): Promise<void> {
+  networkError.value = false
+  await nextTick()
+  networkError.value = true
+}
+
+const submitValid = handleSubmit(
+  async (values) => {
+    try {
+      const link = await mutateAsync(values.url)
+      networkError.value = false
+      emit('created', link)
+    } catch (error) {
+      // Any 400 means the server refused the URL (e.g. it points at the shortener, DR-5).
+      if (isAxiosError(error) && error.response?.status === 400) {
+        setFieldError('url', 'error.url.invalid')
+        focusUrlField()
+        void announce(t('error.url.invalid'))
+      } else {
+        await showNetworkError()
+        void announce(t('error.network'))
+      }
     }
-  }
-})
+  },
+  () => focusUrlField(),
+)
 
 async function onSubmit(event: Event): Promise<void> {
   if (inFlight) return
@@ -60,6 +79,7 @@ async function onSubmit(event: Event): Promise<void> {
 <template>
   <form class="flex flex-wrap items-start gap-2" novalidate @submit.prevent="onSubmit">
     <v-text-field
+      ref="urlField"
       v-model="url"
       v-bind="urlAttrs"
       class="min-w-0 flex-[1_1_320px]"

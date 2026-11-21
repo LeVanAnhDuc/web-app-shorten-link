@@ -1,4 +1,5 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { NextFunction, Request, Response } from 'express';
 import { AppConfig } from './config/app-config';
 
 /** App-wide setup shared by main.ts and the e2e tests. */
@@ -11,4 +12,9 @@ export function configureApp(app: INestApplication): void {
     }),
   );
   app.enableCors({ origin: app.get(AppConfig).clientOrigin });
+  // API responses — success or error — must never be cached (standard-restful-api).
+  app.use('/api', (_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
 }
