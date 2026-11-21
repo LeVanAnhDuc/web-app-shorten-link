@@ -1,0 +1,20 @@
+/* Typography from docs/design-system/shorten-link/MASTER.md: Atkinson for UI, Martian Mono only for codes/URLs. */
+:root {
+  --font-ui: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --font-code: 'Martian Mono', ui-monospace, monospace;
+}
+
+body,
+.v-application {
+  font-family: var(--font-ui);
+}
+
+.v-application .font-code {
+  font-family: var(--font-code);
+}
+
+/* Visible focus on every control (MASTER.md: 2px primary, 2px offset). */
+.v-application :focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}

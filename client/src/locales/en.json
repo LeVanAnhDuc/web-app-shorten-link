@@ -1,0 +1,50 @@
+{
+  "app": {
+    "name": "Shorten Link",
+    "skipToMain": "Skip to main content"
+  },
+  "home": {
+    "title": "Shorten a link",
+    "subtitle": "Paste a long link and get a short one with a QR code. No account needed.",
+    "subtitleNoQr": "Paste a long link and get a short one. No account needed."
+  },
+  "form": {
+    "url": {
+      "label": "Long link",
+      "hint": "Starts with http:// or https://"
+    },
+    "submit": "Shorten",
+    "submitting": "Shortening…"
+  },
+  "result": {
+    "heading": "Your short link",
+    "original": "Original"
+  },
+  "action": {
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "features": {
+    "heading": "What you get",
+    "anonymous": "No sign-up, no account"
+  },
+  "error": {
+    "url": {
+      "required": "Paste a link to shorten.",
+      "invalid": "That doesn't look like a web link. Check it starts with http:// or https://."
+    },
+    "network": "Couldn't reach the server. Check your connection and try again.",
+    "copy": "Couldn't copy. Select the link and copy it manually."
+  },
+  "a11y": {
+    "copyCode": "Copy short link {code}",
+    "created": "Short link created: {shortUrl}"
+  },
+  "theme": {
+    "toDark": "Switch to dark theme",
+    "toLight": "Switch to light theme"
+  },
+  "lang": {
+    "switch": "Tiếng Việt"
+  }
+}
